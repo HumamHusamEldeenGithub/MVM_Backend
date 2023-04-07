@@ -1,23 +1,24 @@
 package service
 
 import (
-	"context"
-	"fmt"
+	"mvm_backend/internal/pkg/errors"
+	"mvm_backend/internal/pkg/jwt_manager"
+	"mvm_backend/internal/pkg/payloads"
 	"mvm_backend/internal/pkg/utils"
 )
 
-func (s *mvmService) LoginUser(ctx context.Context, email, password string) (string, error) {
-	user, err := s.store.GetUser(ctx, email)
+func (s *mvmService) LoginUser(req *payloads.LoginUserRequest) (*jwt_manager.JWTToken, error) {
+	user, err := s.store.GetUser(req.Email)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	if !utils.ComparePasswords(user.Password, password) {
-		return "", fmt.Errorf("incorrect password")
+	if !utils.ComparePasswords(user.Password, req.Password) {
+		return nil, errors.Errorf(errors.InvalidPasswordError)
 	}
-	token, err := s.auth.GenerateToken(user)
+	tokens, err := s.auth.GenerateToken(user, true)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return token, nil
+	return tokens, nil
 }

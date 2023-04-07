@@ -11,10 +11,12 @@ import (
 
 type MVMRepository struct {
 	mongoDBClient *mongo.Client
+	ctx           context.Context
 }
 
 func NewMVMRepository(ctx context.Context, db, pass string) *MVMRepository {
 	return &MVMRepository{
+		ctx:           ctx,
 		mongoDBClient: initMongoDBConnection(ctx, db, pass),
 	}
 }

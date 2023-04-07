@@ -3,13 +3,15 @@ package jwt_manager
 import "time"
 
 type authService struct {
-	secret        string
-	tokenDuration time.Duration
+	secret               string
+	tokenDuration        time.Duration
+	refreshTokenDuration time.Duration
 }
 
-func NewAuthService(secret string, tokenDuration time.Duration) *authService {
+func NewAuthService(secret string, tokenDuration time.Duration, refreshTokenDuration time.Duration) *authService {
 	return &authService{
-		secret:        secret,
-		tokenDuration: tokenDuration,
+		secret:               secret,
+		tokenDuration:        tokenDuration,
+		refreshTokenDuration: refreshTokenDuration,
 	}
 }

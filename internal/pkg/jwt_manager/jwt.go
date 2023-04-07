@@ -15,25 +15,50 @@ type UserClaims struct {
 	Role   string `json:"role"`
 }
 
-func (s *authService) GenerateToken(user *model.User) (string, error) {
-	claims := UserClaims{
+type JWTToken struct {
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
+}
+
+func (s *authService) GenerateToken(user *model.User, generateRefreshToken bool) (*JWTToken, error) {
+	claimsToken := UserClaims{
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Second * 24).Unix(), // Set token expiration to 24 hours from now
+			ExpiresAt: time.Now().Add(s.tokenDuration).Unix(),
 		},
 		UserID: user.ID.Hex(),
 		Role:   "1",
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	// Replace "secret" with your actual JWT secret key
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claimsToken)
 	signedToken, err := token.SignedString([]byte(s.secret))
 	if err != nil {
 		fmt.Println("Error signing JWT token:", err)
-		return "", err
+		return nil, err
 	}
 
-	return signedToken, nil
+	var signedRefreshToken string
+	if generateRefreshToken {
+		claimsRefreshToken := UserClaims{
+			StandardClaims: jwt.StandardClaims{
+				ExpiresAt: time.Now().Add(s.refreshTokenDuration).Unix(), // Set token expiration to 24 hours from now
+			},
+			UserID: user.ID.Hex(),
+			Role:   "1",
+		}
+
+		refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claimsRefreshToken)
+		// Replace "secret" with your actual JWT secret key
+		signedRefreshToken, err = refreshToken.SignedString([]byte(s.secret))
+		if err != nil {
+			fmt.Println("Error signing JWT refresh token:", err)
+			return nil, err
+		}
+	}
+
+	return &JWTToken{
+		Token:        signedToken,
+		RefreshToken: signedRefreshToken,
+	}, nil
 }
 
 func VerifyToken(secret, tokenString string) (*UserClaims, error) {

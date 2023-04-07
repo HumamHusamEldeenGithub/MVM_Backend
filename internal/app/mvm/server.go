@@ -1,9 +1,10 @@
 package mvm
 
 import (
-	"context"
 	v1 "mvm_backend/internal/pkg/generated/mvm-api/v1"
+	"mvm_backend/internal/pkg/jwt_manager"
 	"mvm_backend/internal/pkg/model"
+	"mvm_backend/internal/pkg/payloads"
 )
 
 type MVMServiceServer struct {
@@ -12,9 +13,9 @@ type MVMServiceServer struct {
 }
 
 type IMVMService interface {
-	LoginUser(ctx context.Context, email, password string) (string, error)
-	GetUser(ctx context.Context, email string) (*model.User, error)
-	CreateUser(ctx context.Context, user *model.User) error
+	LoginUser(req *payloads.LoginUserRequest) (*jwt_manager.JWTToken, error)
+	GetUser(email string) (*model.User, error)
+	CreateUser(user *model.User) (string, error)
 }
 
 func NewIMVMServiceServer(service IMVMService) *MVMServiceServer {

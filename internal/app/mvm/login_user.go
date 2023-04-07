@@ -1,16 +1,24 @@
 package mvm
 
 import (
-	"context"
-	v1 "mvm_backend/internal/pkg/generated/mvm-api/v1"
+	"mvm_backend/internal/pkg/payloads"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func (s *MVMServiceServer) LoginUser(ctx context.Context, req *v1.LoginUserRequest) (*v1.LoginUserResponse, error) {
-	token, err := s.service.LoginUser(ctx, req.Email, req.Password)
-	if err != nil {
-		return nil, err
+func (s *MVMServiceServer) LoginUser(c *gin.Context) {
+	var input payloads.LoginUserRequest
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	return &v1.LoginUserResponse{
-		Token: token,
-	}, nil
+
+	res, err := s.service.LoginUser(&input)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, *res)
+
 }

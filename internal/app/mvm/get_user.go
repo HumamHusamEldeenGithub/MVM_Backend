@@ -1,22 +1,23 @@
 package mvm
 
 import (
-	"context"
-	"mvm_backend/internal/pkg/errors"
-	v1 "mvm_backend/internal/pkg/generated/mvm-api/v1"
-	"mvm_backend/internal/pkg/utils"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func (s *MVMServiceServer) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.GetUserResponse, error) {
-	if len(utils.GetUserID(ctx)) == 0 {
-		return nil, errors.Errorf(errors.Unauthenticated)
+func (s *MVMServiceServer) GetUser(c *gin.Context) {
+	email := c.Query("email")
+	if len(email) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email"})
+		return
 	}
 
-	user, err := s.service.GetUser(ctx, req.Email)
+	user, err := s.service.GetUser(email)
 	if err != nil {
-		return nil, err
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	return &v1.GetUserResponse{
-		Username: user.Username,
-	}, nil
+	user.Password = ""
+	c.JSON(http.StatusOK, *user)
 }

@@ -1,21 +1,20 @@
 package service
 
 import (
-	"context"
 	"mvm_backend/internal/pkg/model"
 	"mvm_backend/internal/pkg/utils"
 )
 
-func (s *mvmService) CreateUser(ctx context.Context, user *model.User) error {
+func (s *mvmService) CreateUser(user *model.User) (string, error) {
 	hashedPassword, err := utils.HashMyPassword(user.Password)
 	if err != nil {
-		return err
+		return "", err
 	}
 	user.Password = hashedPassword
 
-	if err := s.store.CreateUser(ctx, user); err != nil {
-		return err
+	userID, err := s.store.CreateUser(user)
+	if err != nil {
+		return "", err
 	}
-
-	return nil
+	return userID, nil
 }

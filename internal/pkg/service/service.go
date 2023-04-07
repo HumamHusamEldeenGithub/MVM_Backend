@@ -1,17 +1,17 @@
 package service
 
 import (
-	"context"
+	"mvm_backend/internal/pkg/jwt_manager"
 	"mvm_backend/internal/pkg/model"
 )
 
 type IMVMStore interface {
-	GetUser(ctx context.Context, email string) (*model.User, error)
-	CreateUser(ctx context.Context, user *model.User) error
+	GetUser(email string) (*model.User, error)
+	CreateUser(user *model.User) (string, error)
 }
 
 type IMVMAuth interface {
-	GenerateToken(user *model.User) (string, error)
+	GenerateToken(user *model.User, refreshToken bool) (*jwt_manager.JWTToken, error)
 }
 
 type mvmService struct {
