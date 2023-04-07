@@ -48,7 +48,7 @@ func (s *authService) GenerateToken(user *model.User, generateRefreshToken bool)
 
 		refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claimsRefreshToken)
 		// Replace "secret" with your actual JWT secret key
-		signedRefreshToken, err = refreshToken.SignedString([]byte(s.secret))
+		signedRefreshToken, err = refreshToken.SignedString([]byte(s.refreshSecret))
 		if err != nil {
 			fmt.Println("Error signing JWT refresh token:", err)
 			return nil, err

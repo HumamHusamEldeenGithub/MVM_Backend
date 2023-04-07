@@ -9,25 +9,25 @@ import (
 	"mvm_backend/internal/pkg/mw"
 	"mvm_backend/internal/pkg/service"
 	"mvm_backend/internal/pkg/store"
-	"net"
 	"os"
-	"os/signal"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"google.golang.org/grpc"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	fmt.Println("Starting MVM server  ...")
 
-	ctx := context.Background()
+	err := godotenv.Load("./.env")
+	if err != nil {
+		fmt.Println("Error loading .env file")
+		os.Exit(1)
+	}
 
-	// GET FROM ENV VAR
-	repository := store.NewMVMRepository(ctx, "Dev", "6EHO7HJ9Zr2bG1Uw")
-	jwt_manager := jwt_manager.NewAuthService("secret", 12*time.Hour, 3600*time.Hour)
+	ctx := context.Background()
+	repository := store.NewMVMRepository(ctx, os.Getenv("MONGO_DB_USERNAME"), os.Getenv("MONGO_DB_PASSWORD"))
+	jwt_manager := jwt_manager.NewAuthService(os.Getenv("JWT_SECRET"), os.Getenv("JWT_REFRESH_SECRET"), 12*time.Hour, 3600*time.Hour)
 	service := service.NewMVMService(repository, jwt_manager)
 	mvmServer := mvm.NewIMVMServiceServer(service)
 
@@ -48,26 +48,4 @@ func main() {
 		log.Panicf("error: %s", err)
 	}
 
-}
-
-func ShutDownServer(s *grpc.Server, listener net.Listener) {
-	// Right way to stop the server using a SHUTDOWN HOOK
-	// Create a channel to receive OS signals
-	c := make(chan os.Signal)
-
-	// Relay os.Interrupt to our channel (os.Interrupt = CTRL+C)
-	// Ignore other incoming signals
-	signal.Notify(c, os.Interrupt)
-
-	// Block main routine until a signal is received
-	// As long as user doesn't press CTRL+C a message is not passed and our main routine keeps running
-	<-c
-
-	// After receiving CTRL+C Properly stop the server
-	fmt.Println("\nStopping the server...")
-	s.Stop()
-	listener.Close()
-	fmt.Println("Closing MongoDB connection")
-	// db.Disconnect(mongoCtx)
-	fmt.Println("Done.")
 }
