@@ -23,8 +23,14 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	fmt.Println("Starting server on port : 8082 ...")
 
+	port := os.Getenv("PORT")
+	fmt.Println("PORT =" + port)
+	if port == "" {
+		port = "8082"
+	}
+
 	// Start our listener, 8082 is the default gRPC port
-	listener, err := net.Listen("tcp", ":8082")
+	listener, err := net.Listen("tcp", ":"+port)
 	// Handle errors if any
 	if err != nil {
 		log.Fatalf("Unable to listen on port :8082: %v", err)
