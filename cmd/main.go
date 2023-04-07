@@ -6,6 +6,7 @@ import (
 	"log"
 	"mvm_backend/internal/app/mvm"
 	"mvm_backend/internal/pkg/jwt_manager"
+	"mvm_backend/internal/pkg/mw"
 	"mvm_backend/internal/pkg/service"
 	"mvm_backend/internal/pkg/store"
 	"net"
@@ -34,7 +35,10 @@ func main() {
 
 	router.POST("/login", mvmServer.LoginUser)
 	router.POST("/user", mvmServer.CreateUser)
-	router.GET("/user", mvmServer.GetUser)
+
+	protected := router.Group("/v1")
+	protected.Use(mw.AuthorizeJWT())
+	protected.GET("/user", mvmServer.GetUser)
 
 	port := os.Getenv("PORT")
 	if port == "" {
