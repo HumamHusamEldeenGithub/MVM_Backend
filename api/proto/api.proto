@@ -1,0 +1,38 @@
+//  protoc --go_out=./internal/pkg/generated  --go-grpc_out=./internal/pkg/generated  ./api/proto/api.proto
+syntax = "proto3";
+package mvm;
+option go_package = "mvm-api/v1";
+
+service MVMService {
+    rpc LoginUser(LoginUserRequest) returns (LoginUserResponse) ;
+    rpc GetUser(GetUserRequest) returns (GetUserResponse) ; 
+
+    rpc CreateUser(CreateUserRequest) returns (Empty);
+    
+}
+
+message Empty {}
+
+message LoginUserRequest{
+    string email = 1;
+    string password = 2;
+}
+
+message LoginUserResponse{
+    string token = 1;
+}
+
+message GetUserRequest {
+    string email = 1;
+}
+
+message GetUserResponse {
+    string username =2;
+}
+ 
+
+message CreateUserRequest {
+    string username = 1;
+    string email = 2;
+    string password = 3;
+}
