@@ -2,16 +2,16 @@ package utils
 
 import (
 	"context"
+
+	"github.com/gin-gonic/gin"
 )
 
 type userIDKey struct{}
 
 // GetUserID gets user id from context
-func GetUserID(ctx context.Context) string {
-	if v, ok := ctx.Value(userIDKey{}).(string); ok {
-		return v
-	}
-	return ""
+func GetJWTToken(c *gin.Context) string {
+	authHeader := c.GetHeader("Authorization")
+	return authHeader[len("Bearer"):]
 }
 
 // UserIDToContext ...

@@ -63,3 +63,5 @@ func Errorf(code ErrorCode, a ...interface{}) error {
 	}
 	return status.Error(d.grpcCode, m)
 }
+
+// func NewError

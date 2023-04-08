@@ -1,7 +1,7 @@
 package payloads
 
 type LoginUserRequest struct {
-	Email    string `json:"email" binding:"required"`
+	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
 
@@ -12,4 +12,12 @@ type LoginUserResponse struct {
 
 type GetUserRequest struct {
 	Email string `json:"email" binding:"required"`
+}
+
+type AddFriendRequest struct {
+	FriendID string `json:"friend_id" binding:"required"`
+}
+
+type SearchForUsers struct {
+	SearchInput string `json:"search_input" binding:"required"`
 }

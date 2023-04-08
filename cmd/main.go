@@ -34,11 +34,14 @@ func main() {
 	router := gin.Default()
 
 	router.POST("/login", mvmServer.LoginUser)
-	router.POST("/user", mvmServer.CreateUser)
+	router.POST("/create", mvmServer.CreateUser)
 
-	protected := router.Group("/v1")
-	protected.Use(mw.AuthorizeJWT())
-	protected.GET("/user", mvmServer.GetUser)
+	userGroup := router.Group("/user")
+	userGroup.Use(mw.AuthorizeJWT())
+	userGroup.GET("/", mvmServer.GetProfile)
+	userGroup.GET("/find", mvmServer.GetUserByUsername)
+	userGroup.POST("/friends/add", mvmServer.AddFriend)
+	userGroup.POST("/search", mvmServer.SearchForUsers)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -47,5 +50,4 @@ func main() {
 	if err := router.Run(":" + port); err != nil {
 		log.Panicf("error: %s", err)
 	}
-
 }

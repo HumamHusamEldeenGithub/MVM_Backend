@@ -12,23 +12,22 @@ import (
 type MVMRepository struct {
 	mongoDBClient *mongo.Client
 	ctx           context.Context
+
+	usersCollection *mongo.Collection
 }
 
 func NewMVMRepository(ctx context.Context, db, pass string) *MVMRepository {
+	dbClient := initMongoDBConnection(ctx, db, pass)
 	return &MVMRepository{
-		ctx:           ctx,
-		mongoDBClient: initMongoDBConnection(ctx, db, pass),
+		ctx:             ctx,
+		mongoDBClient:   dbClient,
+		usersCollection: dbClient.Database("public").Collection("users"),
 	}
 }
 
 func initMongoDBConnection(ctx context.Context, dbTitle, pass string) *mongo.Client {
-	// Dev
-	// 6EHO7HJ9Zr2bG1Uw
-
-	// Initialize MongoDb client
 	fmt.Println("Connecting to MongoDB...")
 
-	// non-nil empty context
 	mongoCtx := context.Background()
 
 	// Connect takes in a context and options, the connection URI is the only option we pass for now

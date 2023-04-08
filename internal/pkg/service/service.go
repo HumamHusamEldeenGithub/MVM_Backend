@@ -6,8 +6,13 @@ import (
 )
 
 type IMVMStore interface {
-	GetUser(email string) (*model.User, error)
 	CreateUser(user *model.User) (string, error)
+
+	GetProfile(id string, withPassword bool) (*model.User, error)
+	GetUserByUsername(username string) (*model.User, error)
+	SearchForUsers(searchInput string) ([]*model.User, error)
+
+	AddFriend(userID, friendID string) error
 }
 
 type IMVMAuth interface {

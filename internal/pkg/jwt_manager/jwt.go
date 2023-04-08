@@ -1,9 +1,11 @@
 package jwt_manager
 
 import (
+	"encoding/json"
 	"fmt"
 	"mvm_backend/internal/pkg/errors"
 	"mvm_backend/internal/pkg/model"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -25,7 +27,7 @@ func (s *authService) GenerateToken(user *model.User, generateRefreshToken bool)
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(s.tokenDuration).Unix(),
 		},
-		UserID: user.ID.Hex(),
+		UserID: user.ID,
 		Role:   "1",
 	}
 
@@ -42,12 +44,11 @@ func (s *authService) GenerateToken(user *model.User, generateRefreshToken bool)
 			StandardClaims: jwt.StandardClaims{
 				ExpiresAt: time.Now().Add(s.refreshTokenDuration).Unix(), // Set token expiration to 24 hours from now
 			},
-			UserID: user.ID.Hex(),
+			UserID: user.ID,
 			Role:   "1",
 		}
 
 		refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claimsRefreshToken)
-		// Replace "secret" with your actual JWT secret key
 		signedRefreshToken, err = refreshToken.SignedString([]byte(s.refreshSecret))
 		if err != nil {
 			fmt.Println("Error signing JWT refresh token:", err)
@@ -62,8 +63,46 @@ func (s *authService) GenerateToken(user *model.User, generateRefreshToken bool)
 }
 
 func VerifyToken(secret, tokenString string) (*UserClaims, error) {
+	claims, err := getUserClaims(secret, tokenString)
+	if err != nil {
+		return nil, err
+	}
+
+	if time.Now().Unix() > claims.ExpiresAt {
+		fmt.Println("JWT token expired")
+		return nil, fmt.Errorf("JWT token expired")
+	}
+
+	return claims, nil
+}
+
+func GetUserIDFromToken(token string) (string, error) {
+	parts := strings.Split(token, ".")
+	if len(parts) != 3 {
+		return "", fmt.Errorf("Invalid token format")
+	}
+
+	claimsBytes, err := jwt.DecodeSegment(parts[1])
+	if err != nil {
+		return "", err
+	}
+
+	var claims jwt.MapClaims
+	err = json.Unmarshal(claimsBytes, &claims)
+	if err != nil {
+		return "", err
+	}
+	fmt.Println(claims)
+	userID, ok := claims["userid"].(string)
+	if !ok {
+		return "", fmt.Errorf("Invalid userid")
+	}
+
+	return userID, nil
+}
+
+func getUserClaims(secret, tokenString string) (*UserClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &UserClaims{}, func(token *jwt.Token) (interface{}, error) {
-		// Replace "secret" with your actual JWT secret key
 		return []byte(secret), nil
 	})
 	if err != nil {
@@ -81,11 +120,5 @@ func VerifyToken(secret, tokenString string) (*UserClaims, error) {
 		fmt.Println("Invalid JWT token")
 		return nil, fmt.Errorf("invalid JWT token")
 	}
-
-	if time.Now().Unix() > claims.ExpiresAt {
-		fmt.Println("JWT token expired")
-		return nil, fmt.Errorf("JWT token expired")
-	}
-
 	return claims, nil
 }
