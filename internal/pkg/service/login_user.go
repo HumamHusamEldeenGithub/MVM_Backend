@@ -8,7 +8,7 @@ import (
 )
 
 func (s *mvmService) LoginUser(req *payloads.LoginUserRequest) (*jwt_manager.JWTToken, error) {
-	user, err := s.store.GetProfile(req.Username, true)
+	user, err := s.store.GetUserByUsername(req.Username, true)
 	if err != nil {
 		return nil, err
 	}

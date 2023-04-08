@@ -10,11 +10,19 @@ type LoginUserResponse struct {
 	RefreshToken string `json:"refresh_token" binding:"required"`
 }
 
+type LoginByRefreshToken struct {
+	RefreshToken string `json:"refresh_token" binding:"required"`
+}
+
 type GetUserRequest struct {
 	Email string `json:"email" binding:"required"`
 }
 
 type AddFriendRequest struct {
+	FriendID string `json:"friend_id" binding:"required"`
+}
+
+type DeleteFriend struct {
 	FriendID string `json:"friend_id" binding:"required"`
 }
 

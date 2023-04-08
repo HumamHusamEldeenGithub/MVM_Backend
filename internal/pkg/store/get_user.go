@@ -7,14 +7,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (repository *MVMRepository) GetUserByUsername(username string) (*model.User, error) {
+func (repository *MVMRepository) GetUserByUsername(username string, withPassword bool) (*model.User, error) {
 	userDB := repository.mongoDBClient.Database("public").Collection("users")
 
 	filter := bson.D{{Key: "username", Value: username}}
 
 	var user model.User
 
-	if err := userDB.FindOne(repository.ctx, filter, options.FindOne().SetProjection(bson.M{"password": 0})).Decode(&user); err != nil {
+	var opt *options.FindOneOptions
+	if !withPassword {
+		opt = options.FindOne().SetProjection(bson.M{"password": 0})
+	}
+
+	if err := userDB.FindOne(repository.ctx, filter, opt).Decode(&user); err != nil {
 		return nil, err
 	}
 	return &user, nil

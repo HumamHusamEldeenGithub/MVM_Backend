@@ -62,18 +62,17 @@ func (s *authService) GenerateToken(user *model.User, generateRefreshToken bool)
 	}, nil
 }
 
-func VerifyToken(secret, tokenString string) (*UserClaims, error) {
-	claims, err := getUserClaims(secret, tokenString)
+func (s *authService) VerifyToken(tokenString string, isRefreshToken bool) (string, error) {
+	claims, err := s.GetUserClaims(tokenString, isRefreshToken)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	if time.Now().Unix() > claims.ExpiresAt {
-		fmt.Println("JWT token expired")
-		return nil, fmt.Errorf("JWT token expired")
+		return "", fmt.Errorf("JWT token expired")
 	}
 
-	return claims, nil
+	return claims.UserID, nil
 }
 
 func GetUserIDFromToken(token string) (string, error) {
@@ -101,7 +100,14 @@ func GetUserIDFromToken(token string) (string, error) {
 	return userID, nil
 }
 
-func getUserClaims(secret, tokenString string) (*UserClaims, error) {
+func (s *authService) GetUserClaims(tokenString string, isRefreshToken bool) (*UserClaims, error) {
+	var secret string
+	if isRefreshToken {
+		secret = s.refreshSecret
+	} else {
+		secret = s.secret
+	}
+
 	token, err := jwt.ParseWithClaims(tokenString, &UserClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secret), nil
 	})
@@ -109,7 +115,6 @@ func getUserClaims(secret, tokenString string) (*UserClaims, error) {
 		fmt.Println("Error parsing JWT token:", err)
 		v, _ := err.(*jwt.ValidationError)
 		if v.Errors == jwt.ValidationErrorExpired {
-			fmt.Println("JWT token expired")
 			return nil, errors.Errorf(errors.ExpiredTokenError)
 		}
 		return nil, err
@@ -117,7 +122,6 @@ func getUserClaims(secret, tokenString string) (*UserClaims, error) {
 
 	claims, ok := token.Claims.(*UserClaims)
 	if !ok || !token.Valid {
-		fmt.Println("Invalid JWT token")
 		return nil, fmt.Errorf("invalid JWT token")
 	}
 	return claims, nil
