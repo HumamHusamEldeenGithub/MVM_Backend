@@ -44,12 +44,15 @@ func main() {
 	// Create a new logging handler using the os.Stdout logger
 	loggingHandler := handlers.LoggingHandler(os.Stdout, router)
 
+	fmt.Println("Server is listening at PORT : " + port)
 	if err = http.ListenAndServe(":"+port, loggingHandler); err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
 }
 
 func SetupRouter(router *mux.Router, mvmServer *mvm.MVMServiceServer, jwt_manager service.IMVMAuth) {
+	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { fmt.Fprintln(w, "MVM Server") }).Methods("GET")
+
 	router.HandleFunc("/login", mvmServer.LoginUser).Methods("POST")
 	router.HandleFunc("/refresh_token", mvmServer.LoginByRefreshToken).Methods("POST")
 	router.HandleFunc("/create", mvmServer.CreateUser).Methods("POST")
