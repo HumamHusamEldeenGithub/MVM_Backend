@@ -6,22 +6,18 @@ import (
 	"net/http"
 )
 
-func (s *MVMServiceServer) DeleteFriend(w http.ResponseWriter, r *http.Request) {
+func (s *MVMServiceServer) GetFriends(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value("user_id").(string)
 	if !ok {
 		http.Error(w, "User ID not found", http.StatusInternalServerError)
 		return
 	}
-	var input mvmPb.DeleteFriendRequest
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
 
-	if err := s.service.DeleteFriend(userID, input.FriendId); err != nil {
+	usersIds, err := s.service.GetFriends(userID)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(mvmPb.Empty{})
+	json.NewEncoder(w).Encode(mvmPb.GetFriendsReposnes{Ids: usersIds})
 }

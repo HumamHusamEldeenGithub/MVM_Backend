@@ -1,29 +1,27 @@
 package mvm
 
 import (
-	"mvm_backend/internal/pkg/jwt_manager"
-	"mvm_backend/internal/pkg/payloads"
-	"mvm_backend/internal/pkg/utils"
+	"encoding/json"
+	"mvm_backend/internal/pkg/generated/mvmPb"
 	"net/http"
-
-	"github.com/gin-gonic/gin"
 )
 
-func (s *MVMServiceServer) AddFriend(c *gin.Context) {
-	userID, err := jwt_manager.GetUserIDFromToken(utils.GetJWTToken(c))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+func (s *MVMServiceServer) AddFriend(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value("user_id").(string)
+	if !ok {
+		http.Error(w, "User ID not found", http.StatusInternalServerError)
 		return
 	}
-	var input payloads.AddFriendRequest
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	var input mvmPb.AddFriendRequest
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if err := s.service.AddFriend(userID, input.FriendID); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err := s.service.AddFriend(userID, input.FriendId); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"success": true})
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(mvmPb.Empty{})
 }

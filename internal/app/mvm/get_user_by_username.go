@@ -2,21 +2,20 @@ package mvm
 
 import (
 	"net/http"
-
-	"github.com/gin-gonic/gin"
 )
 
-func (s *MVMServiceServer) GetUserByUsername(c *gin.Context) {
-	username := c.Query("username")
-	if len(username) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid username"})
-		return
-	}
+func (s *MVMServiceServer) GetUserByUsername(w http.ResponseWriter, r *http.Request) {
+	// username := c.Query("username")
+	// if len(username) == 0 {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid username"})
+	// 	return
+	// }
 
-	user, err := s.service.GetUserByUsername(username)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, *user)
+	// res, err := s.service.GetUserByUsername(username)
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusBadRequest)
+	// 	return
+	// }
+	// w.Header().Set("Content-Type", "application/json")
+	// json.NewEncoder(w).Encode(*res)
 }

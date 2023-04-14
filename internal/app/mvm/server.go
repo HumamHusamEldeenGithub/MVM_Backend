@@ -3,7 +3,7 @@ package mvm
 import (
 	"mvm_backend/internal/pkg/jwt_manager"
 	"mvm_backend/internal/pkg/model"
-	"mvm_backend/internal/pkg/payloads"
+	"net/http"
 )
 
 type MVMServiceServer struct {
@@ -11,7 +11,7 @@ type MVMServiceServer struct {
 }
 
 type IMVMService interface {
-	LoginUser(req *payloads.LoginUserRequest) (*jwt_manager.JWTToken, error)
+	LoginUser(username, password string) (*jwt_manager.JWTToken, error)
 	LoginByRefreshToken(refreshToken string) (*jwt_manager.JWTToken, error)
 	CreateUser(user *model.User) (string, error)
 
@@ -19,8 +19,15 @@ type IMVMService interface {
 	GetProfile(id string) (*model.User, error)
 	SearchForUsers(searchInput string) ([]*model.User, error)
 
+	GetFriends(userID string) ([]string, error)
+
+	CreateFriendRequest(userID, friendID string) error
+	DeleteFriendRequest(userID, friendID string) error
 	AddFriend(userID, friendID string) error
 	DeleteFriend(userID, friendID string) error
+
+	HandleConnections(w http.ResponseWriter, r *http.Request)
+	HandleMessages()
 }
 
 func NewIMVMServiceServer(service IMVMService) *MVMServiceServer {

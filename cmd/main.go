@@ -9,10 +9,11 @@ import (
 	"mvm_backend/internal/pkg/mw"
 	"mvm_backend/internal/pkg/service"
 	"mvm_backend/internal/pkg/store"
+	"net/http"
 	"os"
 	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
 
@@ -31,25 +32,38 @@ func main() {
 	service := service.NewMVMService(repository, jwt_manager)
 	mvmServer := mvm.NewIMVMServiceServer(service)
 
-	router := gin.Default()
-
-	router.POST("/login", mvmServer.LoginUser)
-	router.POST("/refresh_token", mvmServer.LoginByRefreshToken)
-	router.POST("/create", mvmServer.CreateUser)
-
-	userGroup := router.Group("/user")
-	userGroup.Use(mw.AuthorizeJWT(jwt_manager))
-	userGroup.POST("/friends/delete", mvmServer.DeleteFriend)
-	userGroup.POST("/friends/add", mvmServer.AddFriend)
-	userGroup.POST("/search", mvmServer.SearchForUsers)
-	userGroup.GET("/get", mvmServer.GetUserByUsername)
-	userGroup.GET("/", mvmServer.GetProfile)
+	router := mux.NewRouter()
+	SetupRouter(router, mvmServer, jwt_manager)
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
-	if err := router.Run(":" + port); err != nil {
-		log.Panicf("error: %s", err)
+
+	if err = http.ListenAndServe(":"+port, router); err != nil {
+		log.Fatal("ListenAndServe: ", err)
 	}
+}
+
+func SetupRouter(router *mux.Router, mvmServer *mvm.MVMServiceServer, jwt_manager service.IMVMAuth) {
+	router.HandleFunc("/login", mvmServer.LoginUser).Methods("POST")
+	router.HandleFunc("/refresh_token", mvmServer.LoginByRefreshToken).Methods("POST")
+	router.HandleFunc("/create", mvmServer.CreateUser).Methods("POST")
+
+	router.HandleFunc("/websocket", mvmServer.HandleConnections)
+	go mvmServer.HandleMessages()
+
+	userGroup := router.PathPrefix("/user").Subrouter()
+	userGroup.Use(mw.MyMiddleware(jwt_manager))
+	userGroup.HandleFunc("/", mvmServer.GetProfile).Methods("GET")
+	userGroup.HandleFunc("/get", mvmServer.GetUserByUsername).Methods("GET")
+	userGroup.HandleFunc("/search", mvmServer.SearchForUsers).Methods("POST")
+
+	friendsGroup := router.PathPrefix("/friends").Subrouter()
+	friendsGroup.Use(mw.MyMiddleware(jwt_manager))
+	friendsGroup.HandleFunc("", mvmServer.GetFriends).Methods("GET")
+	friendsGroup.HandleFunc("/send", mvmServer.CreateFriendRequest).Methods("POST")
+	friendsGroup.HandleFunc("/ignore", mvmServer.DeleteFriendRequest).Methods("POST")
+	friendsGroup.HandleFunc("/accept", mvmServer.AddFriend).Methods("POST")
+	friendsGroup.HandleFunc("/delete", mvmServer.DeleteFriend).Methods("POST")
 }

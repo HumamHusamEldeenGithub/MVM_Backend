@@ -1,24 +1,33 @@
 package mvm
 
 import (
-	"mvm_backend/internal/pkg/jwt_manager"
-	"mvm_backend/internal/pkg/utils"
+	"encoding/json"
+	"mvm_backend/internal/pkg/generated/mvmPb"
+	"mvm_backend/internal/pkg/model"
 	"net/http"
-
-	"github.com/gin-gonic/gin"
 )
 
-func (s *MVMServiceServer) GetProfile(c *gin.Context) {
-	userID, err := jwt_manager.GetUserIDFromToken(utils.GetJWTToken(c))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+func (s *MVMServiceServer) GetProfile(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value("user_id").(string)
+	if !ok {
+		http.Error(w, "User ID not found", http.StatusInternalServerError)
 		return
 	}
 
-	user, err := s.service.GetProfile(userID)
+	res, err := s.service.GetProfile(userID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	c.JSON(http.StatusOK, *user)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(mvmPb.GetProfileResponse{Profile: encodeUserProfile(res)})
+}
+
+func encodeUserProfile(profile *model.User) *mvmPb.UserProfile {
+	return &mvmPb.UserProfile{
+		Id:       profile.ID,
+		Username: profile.Username,
+		Email:    profile.Email,
+	}
+
 }

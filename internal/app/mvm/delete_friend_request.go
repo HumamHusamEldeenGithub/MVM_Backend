@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func (s *MVMServiceServer) DeleteFriend(w http.ResponseWriter, r *http.Request) {
+func (s *MVMServiceServer) DeleteFriendRequest(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value("user_id").(string)
 	if !ok {
 		http.Error(w, "User ID not found", http.StatusInternalServerError)
@@ -18,7 +18,7 @@ func (s *MVMServiceServer) DeleteFriend(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if err := s.service.DeleteFriend(userID, input.FriendId); err != nil {
+	if err := s.service.DeleteFriendRequest(userID, input.FriendId); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

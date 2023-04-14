@@ -1,0 +1,82 @@
+// protoc --go_out=./internal/pkg/generated  api/mvm.proto
+syntax = "proto3";
+package mvm;
+
+option go_package = "./mvmPb";
+
+message Empty {}
+
+message LoginUserRequest{
+    string username = 1 ;
+    string password = 2;
+}
+
+message LoginUserResponse{
+    string token = 1;
+    string refresh_token = 2;
+}
+
+message LoginByRefreshToken {
+    string refresh_token = 1;
+}
+
+message CreateUserRequest {
+    string username = 1 ; 
+    string email = 2 ; 
+    string password = 3 ;
+}
+
+message CreateUserResponse {
+    string id = 1 ;
+}
+
+message GetProfileRequest {}
+
+message GetProfileResponse {
+    UserProfile profile = 1;
+}
+
+message UserProfile {
+    string id = 1 ; 
+    string username = 2;
+    string email = 3;
+}
+
+message SendFriendRequest {
+    string friend_id = 1 ; 
+}
+
+message DeleteFriendRequest {
+    string friend_id = 1 ; 
+}
+
+message AddFriendRequest {
+    string friend_id = 1 ; 
+}
+
+message GetFriendsRequest {}
+
+message GetFriendsReposnes {
+    repeated string ids = 1;
+}
+
+message SearchForUsersRequest {
+    string search_input = 1 ;
+}
+
+message SearchForUsersResponse {
+    repeated UserProfile users = 1 ;
+}
+
+message InitSocketMessage {
+    string token = 1 ; 
+}
+
+message SokcetMessage  {
+	string UserID = 1 ;
+	string Text = 2 ;   
+}
+
+message SocketMessage {
+    string error = 1 ; 
+}

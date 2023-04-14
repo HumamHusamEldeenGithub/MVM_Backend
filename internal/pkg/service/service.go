@@ -3,7 +3,25 @@ package service
 import (
 	"mvm_backend/internal/pkg/jwt_manager"
 	"mvm_backend/internal/pkg/model"
+	"mvm_backend/internal/pkg/payloads"
+	"net/http"
+
+	"github.com/gorilla/websocket"
 )
+
+var Clients = make(map[*websocket.Conn]model.SocketClient)
+var Clients2 = make(map[string]*websocket.Conn)
+
+var Broadcaster = make(chan payloads.SokcetMessage)
+
+var Upgrader = websocket.Upgrader{
+
+	CheckOrigin: func(r *http.Request) bool {
+
+		return true
+
+	},
+}
 
 type IMVMStore interface {
 	CreateUser(user *model.User) (string, error)
@@ -12,6 +30,9 @@ type IMVMStore interface {
 	GetUserByUsername(username string, withPassword bool) (*model.User, error)
 	SearchForUsers(searchInput string) ([]*model.User, error)
 
+	GetFriends(userID string) ([]string, error)
+	CreateFriendRequest(userID, friendID string) error
+	DeleteFriendRequest(userID, friendID string) error
 	AddFriend(userID, friendID string) error
 	DeleteFriend(userID, friendID string) error
 }

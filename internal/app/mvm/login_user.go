@@ -1,23 +1,27 @@
 package mvm
 
 import (
-	"mvm_backend/internal/pkg/payloads"
+	"encoding/json"
+	"mvm_backend/internal/pkg/generated/mvmPb"
 	"net/http"
-
-	"github.com/gin-gonic/gin"
 )
 
-func (s *MVMServiceServer) LoginUser(c *gin.Context) {
-	var input payloads.LoginUserRequest
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+func (s *MVMServiceServer) LoginUser(w http.ResponseWriter, r *http.Request) {
+	var input mvmPb.LoginUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	res, err := s.service.LoginUser(&input)
+	res, err := s.service.LoginUser(input.Username, input.Password)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	c.JSON(http.StatusOK, *res)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(mvmPb.LoginUserResponse{
+		Token:        res.Token,
+		RefreshToken: res.RefreshToken,
+	})
 }

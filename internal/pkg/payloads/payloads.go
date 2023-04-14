@@ -14,10 +14,6 @@ type LoginByRefreshToken struct {
 	RefreshToken string `json:"refresh_token" binding:"required"`
 }
 
-type GetUserRequest struct {
-	Email string `json:"email" binding:"required"`
-}
-
 type AddFriendRequest struct {
 	FriendID string `json:"friend_id" binding:"required"`
 }
@@ -28,4 +24,29 @@ type DeleteFriend struct {
 
 type SearchForUsers struct {
 	SearchInput string `json:"search_input" binding:"required"`
+}
+
+type CreateFriendRequest struct {
+	FriendID string `json:"friend_id" binding:"required"`
+}
+
+type DeleteFriendRequest struct {
+	FriendID string `json:"friend_id" binding:"required"`
+}
+
+type Success struct {
+	Success bool `json:"success"`
+}
+
+type InitSocketMessage struct {
+	Token string `json:"token"`
+}
+
+type SokcetMessage struct {
+	UserID string `json:"username"`
+	Text   string `json:"text"`
+}
+
+type SocketMessage struct {
+	Error string `json:"error"`
 }
