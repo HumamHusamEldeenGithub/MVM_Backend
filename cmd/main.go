@@ -38,7 +38,7 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "3000"
 	}
 
 	// Create a new logging handler using the os.Stdout logger
