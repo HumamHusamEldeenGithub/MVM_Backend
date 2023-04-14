@@ -3,8 +3,10 @@ package service
 import (
 	"fmt"
 	"log"
-	"mvm_backend/internal/pkg/payloads"
+	"mvm_backend/internal/pkg/generated/mvmPb"
+	"mvm_backend/internal/pkg/model"
 	"net/http"
+	"strings"
 )
 
 func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
@@ -17,54 +19,49 @@ func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("Client has been connected ")
 
-	isAuthorized := false
+	authHeader := r.Header.Get("Authorization")
+	tokenString := strings.ReplaceAll(authHeader, "Bearer ", "")
+	userID, err := s.auth.VerifyToken(tokenString, false)
+	if err != nil {
+		fmt.Println("Client connection has been terminated ")
+		return
+	}
+
+	fmt.Printf("Client %s has been authorized\nWaiting for RoomID\n", userID)
+
+	var msg mvmPb.InitSocketMessage
+
+	// Read in a new message as JSON and map it to a Message object
+	err = ws.ReadJSON(&msg)
+	if err != nil {
+		return
+	}
+
+	roomID := msg.RoomId
+
+	Rooms[roomID] = append(Rooms[roomID], &model.SocketClient{UserID: userID, SocketConnection: ws})
+
+	fmt.Printf("Client %s has been connected to RoomID %s\n", userID, roomID)
 
 	for {
-		// if Clients[ws].UserID == "" {
-		// 	var tokenMessage payloads.InitSocketMessage
-		// 	err := ws.ReadJSON(&tokenMessage)
-		// 	if err != nil || tokenMessage.Token == "" {
-		// 		delete(Clients, ws)
-		// 		fmt.Println("Client connection has been terminated ")
-		// 		break
-		// 	}
-		// 	userID, err := s.auth.VerifyToken(tokenMessage.Token, false)
-		// 	if err != nil {
-		// 		delete(Clients, ws)
-		// 		fmt.Println("Client connection has been terminated ")
-		// 		break
-		// 	}
-		// 	client := Clients[ws]
-		// 	client.UserID = userID
-		// }
 
-		if !isAuthorized {
-			var tokenMessage payloads.InitSocketMessage
-			err := ws.ReadJSON(&tokenMessage)
-			if err != nil || tokenMessage.Token == "" {
-				delete(Clients, ws)
-				fmt.Println("Client connection has been terminated ")
-				break
-			}
-			userID, err := s.auth.VerifyToken(tokenMessage.Token, false)
-			if err != nil {
-				delete(Clients, ws)
-				fmt.Println("Client connection has been terminated ")
-				break
-			}
-			Clients2[userID] = ws
-			isAuthorized = true
-		}
-
-		var msg payloads.SokcetMessage
+		var msg mvmPb.SocketMessage
 
 		// Read in a new message as JSON and map it to a Message object
-		err := ws.ReadJSON(&msg)
+		err = ws.ReadJSON(&msg)
 		if err != nil {
-			delete(Clients, ws)
+			//TODO : Remove client from room
+			//delete(Rooms[roomID], &model.SocketClient{UserID: userID, SocketConnection: ws})
 			break
 		}
+		socketMessage := model.SocketMessage{
+			UserID:    userID,
+			RoomID:    roomID,
+			Message:   msg.Message,
+			Keypoints: msg.Keypoints,
+		}
+
 		// send new message to the channel
-		Broadcaster <- msg
+		Broadcaster <- socketMessage
 	}
 }

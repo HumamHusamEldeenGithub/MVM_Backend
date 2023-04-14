@@ -3,16 +3,14 @@ package service
 import (
 	"mvm_backend/internal/pkg/jwt_manager"
 	"mvm_backend/internal/pkg/model"
-	"mvm_backend/internal/pkg/payloads"
 	"net/http"
 
 	"github.com/gorilla/websocket"
 )
 
-var Clients = make(map[*websocket.Conn]model.SocketClient)
-var Clients2 = make(map[string]*websocket.Conn)
+var Rooms = make(map[string][]*model.SocketClient)
 
-var Broadcaster = make(chan payloads.SokcetMessage)
+var Broadcaster = make(chan model.SocketMessage)
 
 var Upgrader = websocket.Upgrader{
 

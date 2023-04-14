@@ -39,7 +39,7 @@ type Success struct {
 }
 
 type InitSocketMessage struct {
-	Token string `json:"token"`
+	RoomID string `json:"room_id"`
 }
 
 type SokcetMessage struct {

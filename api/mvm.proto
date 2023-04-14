@@ -69,14 +69,16 @@ message SearchForUsersResponse {
 }
 
 message InitSocketMessage {
-    string token = 1 ; 
+    string room_id = 1 ; 
 }
 
-message SokcetMessage  {
-	string UserID = 1 ;
-	string Text = 2 ;   
+message SocketMessage  {
+	optional string message = 2 ;   
+    repeated Keypoint keypoints = 3 ; 
 }
 
-message SocketMessage {
-    string error = 1 ; 
+message Keypoint {
+    double x = 1 ;
+    double y = 2 ;
+    double z = 3 ;
 }
