@@ -13,6 +13,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
@@ -40,7 +41,10 @@ func main() {
 		port = "8080"
 	}
 
-	if err = http.ListenAndServe(":"+port, router); err != nil {
+	// Create a new logging handler using the os.Stdout logger
+	loggingHandler := handlers.LoggingHandler(os.Stdout, router)
+
+	if err = http.ListenAndServe(":"+port, loggingHandler); err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
 }
