@@ -27,21 +27,16 @@ func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("Client %s has been authorized\nWaiting for RoomID\n", userID)
+	roomId := r.URL.Query().Get("room")
 
-	var msg mvmPb.InitSocketMessage
-
-	// Read in a new message as JSON and map it to a Message object
-	err = ws.ReadJSON(&msg)
-	if err != nil {
+	if len(roomId) == 0 {
+		fmt.Println("RoomId is null ,  connection has been terminated ")
 		return
 	}
 
-	roomID := msg.RoomId
+	Rooms[roomId] = append(Rooms[roomId], &model.SocketClient{UserID: userID, SocketConnection: ws})
 
-	Rooms[roomID] = append(Rooms[roomID], &model.SocketClient{UserID: userID, SocketConnection: ws})
-
-	fmt.Printf("Client %s has been connected to RoomID %s\n", userID, roomID)
+	fmt.Printf("Client %s has been authorized\nAnd connected to room : %s\n", userID, roomId)
 
 	for {
 
@@ -56,7 +51,7 @@ func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
 		}
 		socketMessage := model.SocketMessage{
 			UserID:    userID,
-			RoomID:    roomID,
+			RoomID:    roomId,
 			Message:   msg.Message,
 			Keypoints: msg.Keypoints,
 		}

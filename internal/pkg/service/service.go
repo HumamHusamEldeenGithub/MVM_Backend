@@ -1,6 +1,7 @@
 package service
 
 import (
+	"mvm_backend/internal/pkg/generated/mvmPb"
 	"mvm_backend/internal/pkg/jwt_manager"
 	"mvm_backend/internal/pkg/model"
 	"net/http"
@@ -27,6 +28,10 @@ type IMVMStore interface {
 	GetProfile(id string, withPassword bool) (*model.User, error)
 	GetUserByUsername(username string, withPassword bool) (*model.User, error)
 	SearchForUsers(searchInput string) ([]*model.User, error)
+
+	CreateRoom(room *mvmPb.Room) (*mvmPb.Room, error)
+	GetRooms() ([]*mvmPb.Room, error)
+	DeleteRoom(roomId string) error
 
 	GetFriends(userID string) ([]string, error)
 	CreateFriendRequest(userID, friendID string) error

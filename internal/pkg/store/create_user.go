@@ -9,9 +9,8 @@ import (
 )
 
 func (repository *MVMRepository) CreateUser(user *model.User) (string, error) {
-	userDB := repository.mongoDBClient.Database("public").Collection("users")
 
-	result, err := userDB.InsertOne(repository.ctx, user)
+	result, err := repository.usersCollection.InsertOne(repository.ctx, user)
 	if err != nil {
 		// Check for duplicate key error
 		writeException, ok := err.(mongo.WriteException)

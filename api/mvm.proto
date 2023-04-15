@@ -82,3 +82,21 @@ message Keypoint {
     double y = 2 ;
     double z = 3 ;
 }
+
+message Room {
+    string id = 1;
+    string owner_id = 2 ; 
+    string title  = 3 ; 
+}
+
+message CreateRoomResponse{
+    Room room = 1;
+}
+
+message GetRoomsResponse {
+    repeated Room rooms = 1 ; 
+}
+
+message DeleteRoomRequest {
+    string room_id = 1 ; 
+}

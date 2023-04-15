@@ -5,9 +5,5 @@ import (
 )
 
 func (s *mvmService) GetProfile(id string) (*model.User, error) {
-	user, err := s.store.GetProfile(id, false)
-	if err != nil {
-		return nil, err
-	}
-	return user, err
+	return s.store.GetProfile(id, false)
 }

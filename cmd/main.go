@@ -59,9 +59,15 @@ func SetupRouter(router *mux.Router, mvmServer *mvm.MVMServiceServer, jwt_manage
 
 	userGroup := router.PathPrefix("/user").Subrouter()
 	userGroup.Use(mw.MyMiddleware(jwt_manager))
-	userGroup.HandleFunc("/", mvmServer.GetProfile).Methods("GET")
+	userGroup.HandleFunc("", mvmServer.GetProfile).Methods("GET")
 	userGroup.HandleFunc("/get", mvmServer.GetUserByUsername).Methods("GET")
 	userGroup.HandleFunc("/search", mvmServer.SearchForUsers).Methods("POST")
+
+	roomsGroup := router.PathPrefix("/rooms").Subrouter()
+	roomsGroup.Use(mw.MyMiddleware(jwt_manager))
+	roomsGroup.HandleFunc("", mvmServer.CreateRoom).Methods("POST")
+	roomsGroup.HandleFunc("", mvmServer.GetRooms).Methods("GET")
+	roomsGroup.HandleFunc("", mvmServer.DeleteRoom).Methods("DELETE")
 
 	friendsGroup := router.PathPrefix("/friends").Subrouter()
 	friendsGroup.Use(mw.MyMiddleware(jwt_manager))
@@ -70,4 +76,5 @@ func SetupRouter(router *mux.Router, mvmServer *mvm.MVMServiceServer, jwt_manage
 	friendsGroup.HandleFunc("/ignore", mvmServer.DeleteFriendRequest).Methods("POST")
 	friendsGroup.HandleFunc("/accept", mvmServer.AddFriend).Methods("POST")
 	friendsGroup.HandleFunc("/delete", mvmServer.DeleteFriend).Methods("POST")
+
 }

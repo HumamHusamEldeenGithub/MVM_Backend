@@ -960,6 +960,210 @@ func (x *Keypoint) GetZ() float64 {
 	return 0
 }
 
+type Room struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id      string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	OwnerId string `protobuf:"bytes,2,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	Title   string `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+}
+
+func (x *Room) Reset() {
+	*x = Room{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_mvm_proto_msgTypes[19]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Room) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Room) ProtoMessage() {}
+
+func (x *Room) ProtoReflect() protoreflect.Message {
+	mi := &file_api_mvm_proto_msgTypes[19]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Room.ProtoReflect.Descriptor instead.
+func (*Room) Descriptor() ([]byte, []int) {
+	return file_api_mvm_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *Room) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Room) GetOwnerId() string {
+	if x != nil {
+		return x.OwnerId
+	}
+	return ""
+}
+
+func (x *Room) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+type CreateRoomResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Room *Room `protobuf:"bytes,1,opt,name=room,proto3" json:"room,omitempty"`
+}
+
+func (x *CreateRoomResponse) Reset() {
+	*x = CreateRoomResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_mvm_proto_msgTypes[20]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateRoomResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRoomResponse) ProtoMessage() {}
+
+func (x *CreateRoomResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_mvm_proto_msgTypes[20]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRoomResponse.ProtoReflect.Descriptor instead.
+func (*CreateRoomResponse) Descriptor() ([]byte, []int) {
+	return file_api_mvm_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *CreateRoomResponse) GetRoom() *Room {
+	if x != nil {
+		return x.Room
+	}
+	return nil
+}
+
+type GetRoomsResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Rooms []*Room `protobuf:"bytes,1,rep,name=rooms,proto3" json:"rooms,omitempty"`
+}
+
+func (x *GetRoomsResponse) Reset() {
+	*x = GetRoomsResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_mvm_proto_msgTypes[21]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetRoomsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRoomsResponse) ProtoMessage() {}
+
+func (x *GetRoomsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_mvm_proto_msgTypes[21]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRoomsResponse.ProtoReflect.Descriptor instead.
+func (*GetRoomsResponse) Descriptor() ([]byte, []int) {
+	return file_api_mvm_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *GetRoomsResponse) GetRooms() []*Room {
+	if x != nil {
+		return x.Rooms
+	}
+	return nil
+}
+
+type DeleteRoomRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	RoomId string `protobuf:"bytes,1,opt,name=room_id,json=roomId,proto3" json:"room_id,omitempty"`
+}
+
+func (x *DeleteRoomRequest) Reset() {
+	*x = DeleteRoomRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_mvm_proto_msgTypes[22]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteRoomRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteRoomRequest) ProtoMessage() {}
+
+func (x *DeleteRoomRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_mvm_proto_msgTypes[22]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteRoomRequest.ProtoReflect.Descriptor instead.
+func (*DeleteRoomRequest) Descriptor() ([]byte, []int) {
+	return file_api_mvm_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *DeleteRoomRequest) GetRoomId() string {
+	if x != nil {
+		return x.RoomId
+	}
+	return ""
+}
+
 var File_api_mvm_proto protoreflect.FileDescriptor
 
 var file_api_mvm_proto_rawDesc = []byte{
@@ -1031,8 +1235,22 @@ var file_api_mvm_proto_rawDesc = []byte{
 	0x34, 0x0a, 0x08, 0x4b, 0x65, 0x79, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x12, 0x0c, 0x0a, 0x01, 0x78,
 	0x18, 0x01, 0x20, 0x01, 0x28, 0x01, 0x52, 0x01, 0x78, 0x12, 0x0c, 0x0a, 0x01, 0x79, 0x18, 0x02,
 	0x20, 0x01, 0x28, 0x01, 0x52, 0x01, 0x79, 0x12, 0x0c, 0x0a, 0x01, 0x7a, 0x18, 0x03, 0x20, 0x01,
-	0x28, 0x01, 0x52, 0x01, 0x7a, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x2f, 0x6d, 0x76, 0x6d, 0x50, 0x62,
-	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x28, 0x01, 0x52, 0x01, 0x7a, 0x22, 0x47, 0x0a, 0x04, 0x52, 0x6f, 0x6f, 0x6d, 0x12, 0x0e, 0x0a,
+	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x19, 0x0a,
+	0x08, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x07, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x49, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c,
+	0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x22, 0x33,
+	0x0a, 0x12, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6f, 0x6d, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1d, 0x0a, 0x04, 0x72, 0x6f, 0x6f, 0x6d, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x09, 0x2e, 0x6d, 0x76, 0x6d, 0x2e, 0x52, 0x6f, 0x6f, 0x6d, 0x52, 0x04, 0x72,
+	0x6f, 0x6f, 0x6d, 0x22, 0x33, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x52, 0x6f, 0x6f, 0x6d, 0x73, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1f, 0x0a, 0x05, 0x72, 0x6f, 0x6f, 0x6d, 0x73,
+	0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x09, 0x2e, 0x6d, 0x76, 0x6d, 0x2e, 0x52, 0x6f, 0x6f,
+	0x6d, 0x52, 0x05, 0x72, 0x6f, 0x6f, 0x6d, 0x73, 0x22, 0x2c, 0x0a, 0x11, 0x44, 0x65, 0x6c, 0x65,
+	0x74, 0x65, 0x52, 0x6f, 0x6f, 0x6d, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x17, 0x0a,
+	0x07, 0x72, 0x6f, 0x6f, 0x6d, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
+	0x72, 0x6f, 0x6f, 0x6d, 0x49, 0x64, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x2f, 0x6d, 0x76, 0x6d, 0x50,
+	0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1047,7 +1265,7 @@ func file_api_mvm_proto_rawDescGZIP() []byte {
 	return file_api_mvm_proto_rawDescData
 }
 
-var file_api_mvm_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_api_mvm_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_api_mvm_proto_goTypes = []interface{}{
 	(*Empty)(nil),                  // 0: mvm.Empty
 	(*LoginUserRequest)(nil),       // 1: mvm.LoginUserRequest
@@ -1068,16 +1286,22 @@ var file_api_mvm_proto_goTypes = []interface{}{
 	(*InitSocketMessage)(nil),      // 16: mvm.InitSocketMessage
 	(*SocketMessage)(nil),          // 17: mvm.SocketMessage
 	(*Keypoint)(nil),               // 18: mvm.Keypoint
+	(*Room)(nil),                   // 19: mvm.Room
+	(*CreateRoomResponse)(nil),     // 20: mvm.CreateRoomResponse
+	(*GetRoomsResponse)(nil),       // 21: mvm.GetRoomsResponse
+	(*DeleteRoomRequest)(nil),      // 22: mvm.DeleteRoomRequest
 }
 var file_api_mvm_proto_depIdxs = []int32{
 	8,  // 0: mvm.GetProfileResponse.profile:type_name -> mvm.UserProfile
 	8,  // 1: mvm.SearchForUsersResponse.users:type_name -> mvm.UserProfile
 	18, // 2: mvm.SocketMessage.keypoints:type_name -> mvm.Keypoint
-	3,  // [3:3] is the sub-list for method output_type
-	3,  // [3:3] is the sub-list for method input_type
-	3,  // [3:3] is the sub-list for extension type_name
-	3,  // [3:3] is the sub-list for extension extendee
-	0,  // [0:3] is the sub-list for field type_name
+	19, // 3: mvm.CreateRoomResponse.room:type_name -> mvm.Room
+	19, // 4: mvm.GetRoomsResponse.rooms:type_name -> mvm.Room
+	5,  // [5:5] is the sub-list for method output_type
+	5,  // [5:5] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_api_mvm_proto_init() }
@@ -1314,6 +1538,54 @@ func file_api_mvm_proto_init() {
 				return nil
 			}
 		}
+		file_api_mvm_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Room); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_mvm_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CreateRoomResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_mvm_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetRoomsResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_mvm_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteRoomRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	file_api_mvm_proto_msgTypes[17].OneofWrappers = []interface{}{}
 	type x struct{}
@@ -1322,7 +1594,7 @@ func file_api_mvm_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_mvm_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   19,
+			NumMessages:   23,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
