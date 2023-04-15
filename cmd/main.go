@@ -6,6 +6,7 @@ import (
 	"log"
 	"mvm_backend/internal/app/mvm"
 	"mvm_backend/internal/pkg/jwt_manager"
+	"mvm_backend/internal/pkg/logger"
 	"mvm_backend/internal/pkg/mw"
 	"mvm_backend/internal/pkg/service"
 	"mvm_backend/internal/pkg/store"
@@ -13,7 +14,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
@@ -41,11 +41,8 @@ func main() {
 		port = "3000"
 	}
 
-	// Create a new logging handler using the os.Stdout logger
-	loggingHandler := handlers.LoggingHandler(os.Stdout, router)
-
 	fmt.Println("Server is listening at PORT : " + port)
-	if err = http.ListenAndServe(":"+port, loggingHandler); err != nil {
+	if err = http.ListenAndServe(":"+port, logger.LoggerMiddleware(router)); err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
 }
