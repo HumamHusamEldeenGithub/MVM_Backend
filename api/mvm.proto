@@ -73,7 +73,36 @@ message InitSocketMessage {
 }
 
 message SocketMessage  {
-	optional string message = 2 ;   
+    SocketMessageType type = 1;
+    oneof data {
+        RoomMessage room_message = 2 ;
+        UserJoined user_joined = 3 ;
+        ErrorMessage error_message = 4;
+    }
+}
+
+enum SocketMessageType {
+    ROOM_MESSAGE = 0;
+    USER_JOINED = 1;
+    ERROR = 2;
+}
+
+message RoomMessage {
+    optional string message = 2 ;   
+    repeated Keypoint keypoints = 3 ; 
+}
+
+message UserJoined {
+    string id = 1;
+}
+
+message ErrorMessage {
+    int64 status_code = 1 ; 
+    string error = 2 ;
+}
+
+message SimpleSocketMessage {
+    optional string message = 2 ;   
     repeated Keypoint keypoints = 3 ; 
 }
 
@@ -87,6 +116,7 @@ message Room {
     string id = 1;
     string owner_id = 2 ; 
     string title  = 3 ; 
+    repeated string users = 4;
 }
 
 message CreateRoomResponse{

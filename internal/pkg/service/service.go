@@ -32,6 +32,8 @@ type IMVMStore interface {
 	CreateRoom(room *mvmPb.Room) (*mvmPb.Room, error)
 	GetRooms() ([]*mvmPb.Room, error)
 	DeleteRoom(roomId string) error
+	JoinRoom(roomId, userId string) error
+	LeaveRoom(roomId, userId string) error
 
 	GetFriends(userID string) ([]string, error)
 	CreateFriendRequest(userID, friendID string) error

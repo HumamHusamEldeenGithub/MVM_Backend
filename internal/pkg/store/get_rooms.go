@@ -1,7 +1,6 @@
 package store
 
 import (
-	"fmt"
 	"mvm_backend/internal/pkg/generated/mvmPb"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -15,14 +14,13 @@ func (repository *MVMRepository) GetRooms() ([]*mvmPb.Room, error) {
 	}
 
 	var rooms []*mvmPb.Room
-	// Iterate through the cursor and print the documents
+
 	for cursor.Next(repository.ctx) {
 		var room mvmPb.Room
 		err := cursor.Decode(&room)
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println(&room)
 		rooms = append(rooms, &room)
 	}
 

@@ -2,6 +2,7 @@ package errors
 
 import (
 	"fmt"
+	"mvm_backend/internal/pkg/generated/mvmPb"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -64,4 +65,11 @@ func Errorf(code ErrorCode, a ...interface{}) error {
 	return status.Error(d.grpcCode, m)
 }
 
-// func NewError
+func NewSocketError(message string, code int64) *mvmPb.SocketMessage_ErrorMessage {
+	return &mvmPb.SocketMessage_ErrorMessage{
+		ErrorMessage: &mvmPb.ErrorMessage{
+			Error:      message,
+			StatusCode: code,
+		},
+	}
+}

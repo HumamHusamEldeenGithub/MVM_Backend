@@ -22,6 +22,55 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type SocketMessageType int32
+
+const (
+	SocketMessageType_ROOM_MESSAGE SocketMessageType = 0
+	SocketMessageType_USER_JOINED  SocketMessageType = 1
+	SocketMessageType_ERROR        SocketMessageType = 2
+)
+
+// Enum value maps for SocketMessageType.
+var (
+	SocketMessageType_name = map[int32]string{
+		0: "ROOM_MESSAGE",
+		1: "USER_JOINED",
+		2: "ERROR",
+	}
+	SocketMessageType_value = map[string]int32{
+		"ROOM_MESSAGE": 0,
+		"USER_JOINED":  1,
+		"ERROR":        2,
+	}
+)
+
+func (x SocketMessageType) Enum() *SocketMessageType {
+	p := new(SocketMessageType)
+	*p = x
+	return p
+}
+
+func (x SocketMessageType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SocketMessageType) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_mvm_proto_enumTypes[0].Descriptor()
+}
+
+func (SocketMessageType) Type() protoreflect.EnumType {
+	return &file_api_mvm_proto_enumTypes[0]
+}
+
+func (x SocketMessageType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SocketMessageType.Descriptor instead.
+func (SocketMessageType) EnumDescriptor() ([]byte, []int) {
+	return file_api_mvm_proto_rawDescGZIP(), []int{0}
+}
+
 type Empty struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -847,8 +896,13 @@ type SocketMessage struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Message   *string     `protobuf:"bytes,2,opt,name=message,proto3,oneof" json:"message,omitempty"`
-	Keypoints []*Keypoint `protobuf:"bytes,3,rep,name=keypoints,proto3" json:"keypoints,omitempty"`
+	Type SocketMessageType `protobuf:"varint,1,opt,name=type,proto3,enum=mvm.SocketMessageType" json:"type,omitempty"`
+	// Types that are assignable to Data:
+	//
+	//	*SocketMessage_RoomMessage
+	//	*SocketMessage_UserJoined
+	//	*SocketMessage_ErrorMessage
+	Data isSocketMessage_Data `protobuf_oneof:"data"`
 }
 
 func (x *SocketMessage) Reset() {
@@ -883,14 +937,269 @@ func (*SocketMessage) Descriptor() ([]byte, []int) {
 	return file_api_mvm_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *SocketMessage) GetMessage() string {
+func (x *SocketMessage) GetType() SocketMessageType {
+	if x != nil {
+		return x.Type
+	}
+	return SocketMessageType_ROOM_MESSAGE
+}
+
+func (m *SocketMessage) GetData() isSocketMessage_Data {
+	if m != nil {
+		return m.Data
+	}
+	return nil
+}
+
+func (x *SocketMessage) GetRoomMessage() *RoomMessage {
+	if x, ok := x.GetData().(*SocketMessage_RoomMessage); ok {
+		return x.RoomMessage
+	}
+	return nil
+}
+
+func (x *SocketMessage) GetUserJoined() *UserJoined {
+	if x, ok := x.GetData().(*SocketMessage_UserJoined); ok {
+		return x.UserJoined
+	}
+	return nil
+}
+
+func (x *SocketMessage) GetErrorMessage() *ErrorMessage {
+	if x, ok := x.GetData().(*SocketMessage_ErrorMessage); ok {
+		return x.ErrorMessage
+	}
+	return nil
+}
+
+type isSocketMessage_Data interface {
+	isSocketMessage_Data()
+}
+
+type SocketMessage_RoomMessage struct {
+	RoomMessage *RoomMessage `protobuf:"bytes,2,opt,name=room_message,json=roomMessage,proto3,oneof"`
+}
+
+type SocketMessage_UserJoined struct {
+	UserJoined *UserJoined `protobuf:"bytes,3,opt,name=user_joined,json=userJoined,proto3,oneof"`
+}
+
+type SocketMessage_ErrorMessage struct {
+	ErrorMessage *ErrorMessage `protobuf:"bytes,4,opt,name=error_message,json=errorMessage,proto3,oneof"`
+}
+
+func (*SocketMessage_RoomMessage) isSocketMessage_Data() {}
+
+func (*SocketMessage_UserJoined) isSocketMessage_Data() {}
+
+func (*SocketMessage_ErrorMessage) isSocketMessage_Data() {}
+
+type RoomMessage struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Message   *string     `protobuf:"bytes,2,opt,name=message,proto3,oneof" json:"message,omitempty"`
+	Keypoints []*Keypoint `protobuf:"bytes,3,rep,name=keypoints,proto3" json:"keypoints,omitempty"`
+}
+
+func (x *RoomMessage) Reset() {
+	*x = RoomMessage{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_mvm_proto_msgTypes[18]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RoomMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RoomMessage) ProtoMessage() {}
+
+func (x *RoomMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_api_mvm_proto_msgTypes[18]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RoomMessage.ProtoReflect.Descriptor instead.
+func (*RoomMessage) Descriptor() ([]byte, []int) {
+	return file_api_mvm_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *RoomMessage) GetMessage() string {
 	if x != nil && x.Message != nil {
 		return *x.Message
 	}
 	return ""
 }
 
-func (x *SocketMessage) GetKeypoints() []*Keypoint {
+func (x *RoomMessage) GetKeypoints() []*Keypoint {
+	if x != nil {
+		return x.Keypoints
+	}
+	return nil
+}
+
+type UserJoined struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *UserJoined) Reset() {
+	*x = UserJoined{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_mvm_proto_msgTypes[19]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UserJoined) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserJoined) ProtoMessage() {}
+
+func (x *UserJoined) ProtoReflect() protoreflect.Message {
+	mi := &file_api_mvm_proto_msgTypes[19]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserJoined.ProtoReflect.Descriptor instead.
+func (*UserJoined) Descriptor() ([]byte, []int) {
+	return file_api_mvm_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *UserJoined) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type ErrorMessage struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	StatusCode int64  `protobuf:"varint,1,opt,name=status_code,json=statusCode,proto3" json:"status_code,omitempty"`
+	Error      string `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+}
+
+func (x *ErrorMessage) Reset() {
+	*x = ErrorMessage{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_mvm_proto_msgTypes[20]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ErrorMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ErrorMessage) ProtoMessage() {}
+
+func (x *ErrorMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_api_mvm_proto_msgTypes[20]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ErrorMessage.ProtoReflect.Descriptor instead.
+func (*ErrorMessage) Descriptor() ([]byte, []int) {
+	return file_api_mvm_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ErrorMessage) GetStatusCode() int64 {
+	if x != nil {
+		return x.StatusCode
+	}
+	return 0
+}
+
+func (x *ErrorMessage) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
+type SimpleSocketMessage struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Message   *string     `protobuf:"bytes,2,opt,name=message,proto3,oneof" json:"message,omitempty"`
+	Keypoints []*Keypoint `protobuf:"bytes,3,rep,name=keypoints,proto3" json:"keypoints,omitempty"`
+}
+
+func (x *SimpleSocketMessage) Reset() {
+	*x = SimpleSocketMessage{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_mvm_proto_msgTypes[21]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SimpleSocketMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SimpleSocketMessage) ProtoMessage() {}
+
+func (x *SimpleSocketMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_api_mvm_proto_msgTypes[21]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SimpleSocketMessage.ProtoReflect.Descriptor instead.
+func (*SimpleSocketMessage) Descriptor() ([]byte, []int) {
+	return file_api_mvm_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *SimpleSocketMessage) GetMessage() string {
+	if x != nil && x.Message != nil {
+		return *x.Message
+	}
+	return ""
+}
+
+func (x *SimpleSocketMessage) GetKeypoints() []*Keypoint {
 	if x != nil {
 		return x.Keypoints
 	}
@@ -910,7 +1219,7 @@ type Keypoint struct {
 func (x *Keypoint) Reset() {
 	*x = Keypoint{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_mvm_proto_msgTypes[18]
+		mi := &file_api_mvm_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -923,7 +1232,7 @@ func (x *Keypoint) String() string {
 func (*Keypoint) ProtoMessage() {}
 
 func (x *Keypoint) ProtoReflect() protoreflect.Message {
-	mi := &file_api_mvm_proto_msgTypes[18]
+	mi := &file_api_mvm_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -936,7 +1245,7 @@ func (x *Keypoint) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Keypoint.ProtoReflect.Descriptor instead.
 func (*Keypoint) Descriptor() ([]byte, []int) {
-	return file_api_mvm_proto_rawDescGZIP(), []int{18}
+	return file_api_mvm_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *Keypoint) GetX() float64 {
@@ -965,15 +1274,16 @@ type Room struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id      string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	OwnerId string `protobuf:"bytes,2,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
-	Title   string `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Id      string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	OwnerId string   `protobuf:"bytes,2,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	Title   string   `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Users   []string `protobuf:"bytes,4,rep,name=users,proto3" json:"users,omitempty"`
 }
 
 func (x *Room) Reset() {
 	*x = Room{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_mvm_proto_msgTypes[19]
+		mi := &file_api_mvm_proto_msgTypes[23]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -986,7 +1296,7 @@ func (x *Room) String() string {
 func (*Room) ProtoMessage() {}
 
 func (x *Room) ProtoReflect() protoreflect.Message {
-	mi := &file_api_mvm_proto_msgTypes[19]
+	mi := &file_api_mvm_proto_msgTypes[23]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -999,7 +1309,7 @@ func (x *Room) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Room.ProtoReflect.Descriptor instead.
 func (*Room) Descriptor() ([]byte, []int) {
-	return file_api_mvm_proto_rawDescGZIP(), []int{19}
+	return file_api_mvm_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *Room) GetId() string {
@@ -1023,6 +1333,13 @@ func (x *Room) GetTitle() string {
 	return ""
 }
 
+func (x *Room) GetUsers() []string {
+	if x != nil {
+		return x.Users
+	}
+	return nil
+}
+
 type CreateRoomResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1034,7 +1351,7 @@ type CreateRoomResponse struct {
 func (x *CreateRoomResponse) Reset() {
 	*x = CreateRoomResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_mvm_proto_msgTypes[20]
+		mi := &file_api_mvm_proto_msgTypes[24]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1047,7 +1364,7 @@ func (x *CreateRoomResponse) String() string {
 func (*CreateRoomResponse) ProtoMessage() {}
 
 func (x *CreateRoomResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_mvm_proto_msgTypes[20]
+	mi := &file_api_mvm_proto_msgTypes[24]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1060,7 +1377,7 @@ func (x *CreateRoomResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRoomResponse.ProtoReflect.Descriptor instead.
 func (*CreateRoomResponse) Descriptor() ([]byte, []int) {
-	return file_api_mvm_proto_rawDescGZIP(), []int{20}
+	return file_api_mvm_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *CreateRoomResponse) GetRoom() *Room {
@@ -1081,7 +1398,7 @@ type GetRoomsResponse struct {
 func (x *GetRoomsResponse) Reset() {
 	*x = GetRoomsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_mvm_proto_msgTypes[21]
+		mi := &file_api_mvm_proto_msgTypes[25]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1094,7 +1411,7 @@ func (x *GetRoomsResponse) String() string {
 func (*GetRoomsResponse) ProtoMessage() {}
 
 func (x *GetRoomsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_mvm_proto_msgTypes[21]
+	mi := &file_api_mvm_proto_msgTypes[25]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1107,7 +1424,7 @@ func (x *GetRoomsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRoomsResponse.ProtoReflect.Descriptor instead.
 func (*GetRoomsResponse) Descriptor() ([]byte, []int) {
-	return file_api_mvm_proto_rawDescGZIP(), []int{21}
+	return file_api_mvm_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetRoomsResponse) GetRooms() []*Room {
@@ -1128,7 +1445,7 @@ type DeleteRoomRequest struct {
 func (x *DeleteRoomRequest) Reset() {
 	*x = DeleteRoomRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_mvm_proto_msgTypes[22]
+		mi := &file_api_mvm_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1141,7 +1458,7 @@ func (x *DeleteRoomRequest) String() string {
 func (*DeleteRoomRequest) ProtoMessage() {}
 
 func (x *DeleteRoomRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_mvm_proto_msgTypes[22]
+	mi := &file_api_mvm_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1154,7 +1471,7 @@ func (x *DeleteRoomRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteRoomRequest.ProtoReflect.Descriptor instead.
 func (*DeleteRoomRequest) Descriptor() ([]byte, []int) {
-	return file_api_mvm_proto_rawDescGZIP(), []int{22}
+	return file_api_mvm_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *DeleteRoomRequest) GetRoomId() string {
@@ -1225,32 +1542,65 @@ var file_api_mvm_proto_rawDesc = []byte{
 	0x65, 0x52, 0x05, 0x75, 0x73, 0x65, 0x72, 0x73, 0x22, 0x2c, 0x0a, 0x11, 0x49, 0x6e, 0x69, 0x74,
 	0x53, 0x6f, 0x63, 0x6b, 0x65, 0x74, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x17, 0x0a,
 	0x07, 0x72, 0x6f, 0x6f, 0x6d, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
-	0x72, 0x6f, 0x6f, 0x6d, 0x49, 0x64, 0x22, 0x67, 0x0a, 0x0d, 0x53, 0x6f, 0x63, 0x6b, 0x65, 0x74,
-	0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x1d, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61,
-	0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x48, 0x00, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73,
-	0x61, 0x67, 0x65, 0x88, 0x01, 0x01, 0x12, 0x2b, 0x0a, 0x09, 0x6b, 0x65, 0x79, 0x70, 0x6f, 0x69,
-	0x6e, 0x74, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x6d, 0x76, 0x6d, 0x2e,
-	0x4b, 0x65, 0x79, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x52, 0x09, 0x6b, 0x65, 0x79, 0x70, 0x6f, 0x69,
-	0x6e, 0x74, 0x73, 0x42, 0x0a, 0x0a, 0x08, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22,
-	0x34, 0x0a, 0x08, 0x4b, 0x65, 0x79, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x12, 0x0c, 0x0a, 0x01, 0x78,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x01, 0x52, 0x01, 0x78, 0x12, 0x0c, 0x0a, 0x01, 0x79, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x01, 0x52, 0x01, 0x79, 0x12, 0x0c, 0x0a, 0x01, 0x7a, 0x18, 0x03, 0x20, 0x01,
-	0x28, 0x01, 0x52, 0x01, 0x7a, 0x22, 0x47, 0x0a, 0x04, 0x52, 0x6f, 0x6f, 0x6d, 0x12, 0x0e, 0x0a,
-	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x19, 0x0a,
-	0x08, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x07, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x49, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c,
-	0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x22, 0x33,
-	0x0a, 0x12, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6f, 0x6d, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1d, 0x0a, 0x04, 0x72, 0x6f, 0x6f, 0x6d, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x0b, 0x32, 0x09, 0x2e, 0x6d, 0x76, 0x6d, 0x2e, 0x52, 0x6f, 0x6f, 0x6d, 0x52, 0x04, 0x72,
-	0x6f, 0x6f, 0x6d, 0x22, 0x33, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x52, 0x6f, 0x6f, 0x6d, 0x73, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1f, 0x0a, 0x05, 0x72, 0x6f, 0x6f, 0x6d, 0x73,
-	0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x09, 0x2e, 0x6d, 0x76, 0x6d, 0x2e, 0x52, 0x6f, 0x6f,
-	0x6d, 0x52, 0x05, 0x72, 0x6f, 0x6f, 0x6d, 0x73, 0x22, 0x2c, 0x0a, 0x11, 0x44, 0x65, 0x6c, 0x65,
-	0x74, 0x65, 0x52, 0x6f, 0x6f, 0x6d, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x17, 0x0a,
-	0x07, 0x72, 0x6f, 0x6f, 0x6d, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
-	0x72, 0x6f, 0x6f, 0x6d, 0x49, 0x64, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x2f, 0x6d, 0x76, 0x6d, 0x50,
-	0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x72, 0x6f, 0x6f, 0x6d, 0x49, 0x64, 0x22, 0xe8, 0x01, 0x0a, 0x0d, 0x53, 0x6f, 0x63, 0x6b, 0x65,
+	0x74, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x2a, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x16, 0x2e, 0x6d, 0x76, 0x6d, 0x2e, 0x53, 0x6f, 0x63,
+	0x6b, 0x65, 0x74, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x54, 0x79, 0x70, 0x65, 0x52, 0x04,
+	0x74, 0x79, 0x70, 0x65, 0x12, 0x35, 0x0a, 0x0c, 0x72, 0x6f, 0x6f, 0x6d, 0x5f, 0x6d, 0x65, 0x73,
+	0x73, 0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x6d, 0x76, 0x6d,
+	0x2e, 0x52, 0x6f, 0x6f, 0x6d, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x48, 0x00, 0x52, 0x0b,
+	0x72, 0x6f, 0x6f, 0x6d, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x32, 0x0a, 0x0b, 0x75,
+	0x73, 0x65, 0x72, 0x5f, 0x6a, 0x6f, 0x69, 0x6e, 0x65, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x0f, 0x2e, 0x6d, 0x76, 0x6d, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x4a, 0x6f, 0x69, 0x6e, 0x65,
+	0x64, 0x48, 0x00, 0x52, 0x0a, 0x75, 0x73, 0x65, 0x72, 0x4a, 0x6f, 0x69, 0x6e, 0x65, 0x64, 0x12,
+	0x38, 0x0a, 0x0d, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
+	0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x11, 0x2e, 0x6d, 0x76, 0x6d, 0x2e, 0x45, 0x72, 0x72,
+	0x6f, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x48, 0x00, 0x52, 0x0c, 0x65, 0x72, 0x72,
+	0x6f, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x42, 0x06, 0x0a, 0x04, 0x64, 0x61, 0x74,
+	0x61, 0x22, 0x65, 0x0a, 0x0b, 0x52, 0x6f, 0x6f, 0x6d, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
+	0x12, 0x1d, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x48, 0x00, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x88, 0x01, 0x01, 0x12,
+	0x2b, 0x0a, 0x09, 0x6b, 0x65, 0x79, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x73, 0x18, 0x03, 0x20, 0x03,
+	0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x6d, 0x76, 0x6d, 0x2e, 0x4b, 0x65, 0x79, 0x70, 0x6f, 0x69, 0x6e,
+	0x74, 0x52, 0x09, 0x6b, 0x65, 0x79, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x73, 0x42, 0x0a, 0x0a, 0x08,
+	0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x1c, 0x0a, 0x0a, 0x55, 0x73, 0x65, 0x72,
+	0x4a, 0x6f, 0x69, 0x6e, 0x65, 0x64, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x45, 0x0a, 0x0c, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x4d,
+	0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x1f, 0x0a, 0x0b, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73,
+	0x5f, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0a, 0x73, 0x74, 0x61,
+	0x74, 0x75, 0x73, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x22, 0x6d, 0x0a,
+	0x13, 0x53, 0x69, 0x6d, 0x70, 0x6c, 0x65, 0x53, 0x6f, 0x63, 0x6b, 0x65, 0x74, 0x4d, 0x65, 0x73,
+	0x73, 0x61, 0x67, 0x65, 0x12, 0x1d, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x48, 0x00, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
+	0x88, 0x01, 0x01, 0x12, 0x2b, 0x0a, 0x09, 0x6b, 0x65, 0x79, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x73,
+	0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x6d, 0x76, 0x6d, 0x2e, 0x4b, 0x65, 0x79,
+	0x70, 0x6f, 0x69, 0x6e, 0x74, 0x52, 0x09, 0x6b, 0x65, 0x79, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x73,
+	0x42, 0x0a, 0x0a, 0x08, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x34, 0x0a, 0x08,
+	0x4b, 0x65, 0x79, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x12, 0x0c, 0x0a, 0x01, 0x78, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x01, 0x52, 0x01, 0x78, 0x12, 0x0c, 0x0a, 0x01, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x01, 0x52, 0x01, 0x79, 0x12, 0x0c, 0x0a, 0x01, 0x7a, 0x18, 0x03, 0x20, 0x01, 0x28, 0x01, 0x52,
+	0x01, 0x7a, 0x22, 0x5d, 0x0a, 0x04, 0x52, 0x6f, 0x6f, 0x6d, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x19, 0x0a, 0x08, 0x6f, 0x77,
+	0x6e, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6f, 0x77,
+	0x6e, 0x65, 0x72, 0x49, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x75,
+	0x73, 0x65, 0x72, 0x73, 0x18, 0x04, 0x20, 0x03, 0x28, 0x09, 0x52, 0x05, 0x75, 0x73, 0x65, 0x72,
+	0x73, 0x22, 0x33, 0x0a, 0x12, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6f, 0x6d, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1d, 0x0a, 0x04, 0x72, 0x6f, 0x6f, 0x6d, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x09, 0x2e, 0x6d, 0x76, 0x6d, 0x2e, 0x52, 0x6f, 0x6f, 0x6d,
+	0x52, 0x04, 0x72, 0x6f, 0x6f, 0x6d, 0x22, 0x33, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x52, 0x6f, 0x6f,
+	0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1f, 0x0a, 0x05, 0x72, 0x6f,
+	0x6f, 0x6d, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x09, 0x2e, 0x6d, 0x76, 0x6d, 0x2e,
+	0x52, 0x6f, 0x6f, 0x6d, 0x52, 0x05, 0x72, 0x6f, 0x6f, 0x6d, 0x73, 0x22, 0x2c, 0x0a, 0x11, 0x44,
+	0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x6f, 0x6f, 0x6d, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x17, 0x0a, 0x07, 0x72, 0x6f, 0x6f, 0x6d, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x06, 0x72, 0x6f, 0x6f, 0x6d, 0x49, 0x64, 0x2a, 0x41, 0x0a, 0x11, 0x53, 0x6f, 0x63,
+	0x6b, 0x65, 0x74, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x54, 0x79, 0x70, 0x65, 0x12, 0x10,
+	0x0a, 0x0c, 0x52, 0x4f, 0x4f, 0x4d, 0x5f, 0x4d, 0x45, 0x53, 0x53, 0x41, 0x47, 0x45, 0x10, 0x00,
+	0x12, 0x0f, 0x0a, 0x0b, 0x55, 0x53, 0x45, 0x52, 0x5f, 0x4a, 0x4f, 0x49, 0x4e, 0x45, 0x44, 0x10,
+	0x01, 0x12, 0x09, 0x0a, 0x05, 0x45, 0x52, 0x52, 0x4f, 0x52, 0x10, 0x02, 0x42, 0x09, 0x5a, 0x07,
+	0x2e, 0x2f, 0x6d, 0x76, 0x6d, 0x50, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1265,43 +1615,54 @@ func file_api_mvm_proto_rawDescGZIP() []byte {
 	return file_api_mvm_proto_rawDescData
 }
 
-var file_api_mvm_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
+var file_api_mvm_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_api_mvm_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_api_mvm_proto_goTypes = []interface{}{
-	(*Empty)(nil),                  // 0: mvm.Empty
-	(*LoginUserRequest)(nil),       // 1: mvm.LoginUserRequest
-	(*LoginUserResponse)(nil),      // 2: mvm.LoginUserResponse
-	(*LoginByRefreshToken)(nil),    // 3: mvm.LoginByRefreshToken
-	(*CreateUserRequest)(nil),      // 4: mvm.CreateUserRequest
-	(*CreateUserResponse)(nil),     // 5: mvm.CreateUserResponse
-	(*GetProfileRequest)(nil),      // 6: mvm.GetProfileRequest
-	(*GetProfileResponse)(nil),     // 7: mvm.GetProfileResponse
-	(*UserProfile)(nil),            // 8: mvm.UserProfile
-	(*SendFriendRequest)(nil),      // 9: mvm.SendFriendRequest
-	(*DeleteFriendRequest)(nil),    // 10: mvm.DeleteFriendRequest
-	(*AddFriendRequest)(nil),       // 11: mvm.AddFriendRequest
-	(*GetFriendsRequest)(nil),      // 12: mvm.GetFriendsRequest
-	(*GetFriendsReposnes)(nil),     // 13: mvm.GetFriendsReposnes
-	(*SearchForUsersRequest)(nil),  // 14: mvm.SearchForUsersRequest
-	(*SearchForUsersResponse)(nil), // 15: mvm.SearchForUsersResponse
-	(*InitSocketMessage)(nil),      // 16: mvm.InitSocketMessage
-	(*SocketMessage)(nil),          // 17: mvm.SocketMessage
-	(*Keypoint)(nil),               // 18: mvm.Keypoint
-	(*Room)(nil),                   // 19: mvm.Room
-	(*CreateRoomResponse)(nil),     // 20: mvm.CreateRoomResponse
-	(*GetRoomsResponse)(nil),       // 21: mvm.GetRoomsResponse
-	(*DeleteRoomRequest)(nil),      // 22: mvm.DeleteRoomRequest
+	(SocketMessageType)(0),         // 0: mvm.SocketMessageType
+	(*Empty)(nil),                  // 1: mvm.Empty
+	(*LoginUserRequest)(nil),       // 2: mvm.LoginUserRequest
+	(*LoginUserResponse)(nil),      // 3: mvm.LoginUserResponse
+	(*LoginByRefreshToken)(nil),    // 4: mvm.LoginByRefreshToken
+	(*CreateUserRequest)(nil),      // 5: mvm.CreateUserRequest
+	(*CreateUserResponse)(nil),     // 6: mvm.CreateUserResponse
+	(*GetProfileRequest)(nil),      // 7: mvm.GetProfileRequest
+	(*GetProfileResponse)(nil),     // 8: mvm.GetProfileResponse
+	(*UserProfile)(nil),            // 9: mvm.UserProfile
+	(*SendFriendRequest)(nil),      // 10: mvm.SendFriendRequest
+	(*DeleteFriendRequest)(nil),    // 11: mvm.DeleteFriendRequest
+	(*AddFriendRequest)(nil),       // 12: mvm.AddFriendRequest
+	(*GetFriendsRequest)(nil),      // 13: mvm.GetFriendsRequest
+	(*GetFriendsReposnes)(nil),     // 14: mvm.GetFriendsReposnes
+	(*SearchForUsersRequest)(nil),  // 15: mvm.SearchForUsersRequest
+	(*SearchForUsersResponse)(nil), // 16: mvm.SearchForUsersResponse
+	(*InitSocketMessage)(nil),      // 17: mvm.InitSocketMessage
+	(*SocketMessage)(nil),          // 18: mvm.SocketMessage
+	(*RoomMessage)(nil),            // 19: mvm.RoomMessage
+	(*UserJoined)(nil),             // 20: mvm.UserJoined
+	(*ErrorMessage)(nil),           // 21: mvm.ErrorMessage
+	(*SimpleSocketMessage)(nil),    // 22: mvm.SimpleSocketMessage
+	(*Keypoint)(nil),               // 23: mvm.Keypoint
+	(*Room)(nil),                   // 24: mvm.Room
+	(*CreateRoomResponse)(nil),     // 25: mvm.CreateRoomResponse
+	(*GetRoomsResponse)(nil),       // 26: mvm.GetRoomsResponse
+	(*DeleteRoomRequest)(nil),      // 27: mvm.DeleteRoomRequest
 }
 var file_api_mvm_proto_depIdxs = []int32{
-	8,  // 0: mvm.GetProfileResponse.profile:type_name -> mvm.UserProfile
-	8,  // 1: mvm.SearchForUsersResponse.users:type_name -> mvm.UserProfile
-	18, // 2: mvm.SocketMessage.keypoints:type_name -> mvm.Keypoint
-	19, // 3: mvm.CreateRoomResponse.room:type_name -> mvm.Room
-	19, // 4: mvm.GetRoomsResponse.rooms:type_name -> mvm.Room
-	5,  // [5:5] is the sub-list for method output_type
-	5,  // [5:5] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	9,  // 0: mvm.GetProfileResponse.profile:type_name -> mvm.UserProfile
+	9,  // 1: mvm.SearchForUsersResponse.users:type_name -> mvm.UserProfile
+	0,  // 2: mvm.SocketMessage.type:type_name -> mvm.SocketMessageType
+	19, // 3: mvm.SocketMessage.room_message:type_name -> mvm.RoomMessage
+	20, // 4: mvm.SocketMessage.user_joined:type_name -> mvm.UserJoined
+	21, // 5: mvm.SocketMessage.error_message:type_name -> mvm.ErrorMessage
+	23, // 6: mvm.RoomMessage.keypoints:type_name -> mvm.Keypoint
+	23, // 7: mvm.SimpleSocketMessage.keypoints:type_name -> mvm.Keypoint
+	24, // 8: mvm.CreateRoomResponse.room:type_name -> mvm.Room
+	24, // 9: mvm.GetRoomsResponse.rooms:type_name -> mvm.Room
+	10, // [10:10] is the sub-list for method output_type
+	10, // [10:10] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_api_mvm_proto_init() }
@@ -1527,7 +1888,7 @@ func file_api_mvm_proto_init() {
 			}
 		}
 		file_api_mvm_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Keypoint); i {
+			switch v := v.(*RoomMessage); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1539,7 +1900,7 @@ func file_api_mvm_proto_init() {
 			}
 		}
 		file_api_mvm_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Room); i {
+			switch v := v.(*UserJoined); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1551,7 +1912,7 @@ func file_api_mvm_proto_init() {
 			}
 		}
 		file_api_mvm_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateRoomResponse); i {
+			switch v := v.(*ErrorMessage); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1563,7 +1924,7 @@ func file_api_mvm_proto_init() {
 			}
 		}
 		file_api_mvm_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetRoomsResponse); i {
+			switch v := v.(*SimpleSocketMessage); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1575,6 +1936,54 @@ func file_api_mvm_proto_init() {
 			}
 		}
 		file_api_mvm_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Keypoint); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_mvm_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Room); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_mvm_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CreateRoomResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_mvm_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetRoomsResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_mvm_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteRoomRequest); i {
 			case 0:
 				return &v.state
@@ -1587,19 +1996,26 @@ func file_api_mvm_proto_init() {
 			}
 		}
 	}
-	file_api_mvm_proto_msgTypes[17].OneofWrappers = []interface{}{}
+	file_api_mvm_proto_msgTypes[17].OneofWrappers = []interface{}{
+		(*SocketMessage_RoomMessage)(nil),
+		(*SocketMessage_UserJoined)(nil),
+		(*SocketMessage_ErrorMessage)(nil),
+	}
+	file_api_mvm_proto_msgTypes[18].OneofWrappers = []interface{}{}
+	file_api_mvm_proto_msgTypes[21].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_mvm_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   23,
+			NumEnums:      1,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_api_mvm_proto_goTypes,
 		DependencyIndexes: file_api_mvm_proto_depIdxs,
+		EnumInfos:         file_api_mvm_proto_enumTypes,
 		MessageInfos:      file_api_mvm_proto_msgTypes,
 	}.Build()
 	File_api_mvm_proto = out.File

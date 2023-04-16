@@ -18,17 +18,9 @@ func (s *mvmService) HandleMessages() {
 			if err := client.SocketConnection.WriteJSON(msg); err != nil {
 				log.Printf("error: %v", err)
 				client.SocketConnection.Close()
-				// TODO : Delete client
-				//delete(Clients, Clients2[msg.UserID])
+				s.LeaveRoom(msg.RoomID, client.UserID)
+				deleteUserFromRoom(msg.RoomID, client.UserID)
 			}
 		}
-		// if Clients2[msg.UserID] != nil {
-		// 	if err := Clients2[msg.UserID].WriteJSON(msg); err != nil {
-		// 		log.Printf("error: %v", err)
-		// 		Clients2[msg.UserID].Close()
-		// 		delete(Clients, Clients2[msg.UserID])
-		// 	}
-		// }
-
 	}
 }
