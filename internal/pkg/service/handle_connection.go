@@ -37,6 +37,11 @@ func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := s.CheckRoomAvailability(roomId, userID); err != nil {
+		handleError(ws, "Not authorized to enter this room ", http.StatusUnauthorized)
+		return
+	}
+
 	Rooms[roomId] = append(Rooms[roomId], &model.SocketClient{UserID: userID, SocketConnection: ws})
 
 	if err := s.JoinRoom(roomId, userID); err != nil {

@@ -68,6 +68,8 @@ func SetupRouter(router *mux.Router, mvmServer *mvm.MVMServiceServer, jwt_manage
 	roomsGroup.HandleFunc("", mvmServer.CreateRoom).Methods("POST")
 	roomsGroup.HandleFunc("", mvmServer.GetRooms).Methods("GET")
 	roomsGroup.HandleFunc("", mvmServer.DeleteRoom).Methods("DELETE")
+	roomsGroup.HandleFunc("/invitations", mvmServer.CreateRoomInvitation).Methods("POST")
+	roomsGroup.HandleFunc("/invitations", mvmServer.DeleteRoomInvitation).Methods("DELETE")
 
 	friendsGroup := router.PathPrefix("/friends").Subrouter()
 	friendsGroup.Use(mw.MyMiddleware(jwt_manager))

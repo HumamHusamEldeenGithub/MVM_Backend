@@ -8,7 +8,8 @@ import (
 )
 
 func (repository *MVMRepository) CreateRoom(room *mvmPb.Room) (*mvmPb.Room, error) {
-
+	room.Users = []string{}
+	room.Invitations = []string{}
 	_, err := repository.roomsCollection.InsertOne(repository.ctx, room)
 	if err != nil {
 		// Check for duplicate key error

@@ -117,6 +117,9 @@ message Room {
     string owner_id = 2 ; 
     string title  = 3 ; 
     repeated string users = 4;
+    bool is_private = 5; 
+    bool friends_only = 6 ;
+    repeated string invitations = 7 ;
 }
 
 message CreateRoomResponse{
@@ -129,4 +132,14 @@ message GetRoomsResponse {
 
 message DeleteRoomRequest {
     string room_id = 1 ; 
+}
+
+message CreateRoomInvitation {
+    string room_id = 1 ;
+    string user_id = 2 ;
+}
+
+message DeleteRoomInvitation {
+    string room_id = 1 ;
+    string user_id = 2 ;
 }

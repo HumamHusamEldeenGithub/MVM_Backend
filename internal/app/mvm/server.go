@@ -23,6 +23,8 @@ type IMVMService interface {
 	CreateRoom(room *mvmPb.Room) (*mvmPb.Room, error)
 	GetRooms() ([]*mvmPb.Room, error)
 	DeleteRoom(userId, roomId string) error
+	CreateRoomInvitation(userId, roomId, recipientId string) error
+	DeleteRoomInvitation(userId, roomId, recipientId string) error
 
 	CreateFriendRequest(userID, friendID string) error
 	DeleteFriendRequest(userID, friendID string) error
