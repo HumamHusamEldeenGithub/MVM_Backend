@@ -16,8 +16,13 @@ message LoginUserResponse{
     string refresh_token = 2;
 }
 
-message LoginByRefreshToken {
+message LoginByRefreshTokenRequest {
     string refresh_token = 1;
+}
+
+message LoginByRefreshTokenResponse {
+    string token = 1;
+    string refresh_token = 2;
 }
 
 message CreateUserRequest {
@@ -36,23 +41,37 @@ message GetProfileResponse {
     UserProfile profile = 1;
 }
 
-message UserProfile {
-    string id = 1 ; 
-    string username = 2;
-    string email = 3;
+message GetUserByUsernameRequest {
+    string username = 1 ;
 }
 
-message SendFriendRequest {
+message GetUserByUsernameResponse {
+    UserProfile profile = 1;
+}
+
+message CreateFriendRequestRequest {
     string friend_id = 1 ; 
 }
 
-message DeleteFriendRequest {
+message CreateFriendRequestResponse {}
+
+message DeleteFriendRequestRequest {
     string friend_id = 1 ; 
 }
+
+message DeleteFriendRequestResponse {}
 
 message AddFriendRequest {
     string friend_id = 1 ; 
 }
+
+message AddFriendResponse {}
+
+message DeleteFriendRequest{
+    string friend_id = 1 ; 
+}
+
+message DeleteFriendResponse {}
 
 message GetFriendsRequest {}
 
@@ -68,16 +87,65 @@ message SearchForUsersResponse {
     repeated UserProfile users = 1 ;
 }
 
-message InitSocketMessage {
+message CreateRoomRequest{
+    string title  = 1 ; 
+    bool is_private = 2; 
+    bool friends_only = 3;
+}
+
+message CreateRoomResponse{
+    Room room = 1;
+}
+
+message GetRoomRequest {}
+
+message GetRoomsResponse {
+    repeated Room rooms = 1 ; 
+}
+
+message DeleteRoomRequest {
     string room_id = 1 ; 
+}
+
+message DeleteRoomResponse {
+    string room_id = 1 ; 
+}
+
+message CreateRoomInvitationRequest {
+    string room_id = 1 ;
+    string user_id = 2 ;
+}
+
+message CreateRoomInvitationResponse {}
+
+message DeleteRoomInvitationRequest {
+    string room_id = 1 ;
+    string user_id = 2 ;
+}
+
+message DeleteRoomInvitationResponse {}
+
+message UserProfile {
+    string id = 1 ; 
+    string username = 2;
+    string email = 3;
+}
+
+message Room {
+    string id = 1;
+    string owner_id = 2 ; 
+    string title  = 3 ; 
+    repeated string users = 4;
+    bool is_private = 5; 
+    bool friends_only = 6 ;
+    repeated string invitations = 7 ;
 }
 
 message SocketMessage  {
     SocketMessageType type = 1;
     oneof data {
         RoomMessage room_message = 2 ;
-        UserJoined user_joined = 3 ;
-        ErrorMessage error_message = 4;
+        ErrorMessage error_message = 3;
     }
 }
 
@@ -92,10 +160,6 @@ message RoomMessage {
     repeated Keypoint keypoints = 3 ; 
 }
 
-message UserJoined {
-    string id = 1;
-}
-
 message ErrorMessage {
     int64 status_code = 1 ; 
     string error = 2 ;
@@ -106,40 +170,15 @@ message SimpleSocketMessage {
     repeated Keypoint keypoints = 3 ; 
 }
 
-message Keypoint {
-    double x = 1 ;
-    double y = 2 ;
-    double z = 3 ;
-}
-
-message Room {
-    string id = 1;
-    string owner_id = 2 ; 
-    string title  = 3 ; 
-    repeated string users = 4;
-    bool is_private = 5; 
-    bool friends_only = 6 ;
-    repeated string invitations = 7 ;
-}
-
-message CreateRoomResponse{
-    Room room = 1;
-}
-
-message GetRoomsResponse {
-    repeated Room rooms = 1 ; 
-}
-
-message DeleteRoomRequest {
+message SocketMessage2{
     string room_id = 1 ; 
+    string user_id = 2 ;
+    optional string message = 3 ;   
+    repeated Keypoint keypoints = 4 ; 
 }
 
-message CreateRoomInvitation {
-    string room_id = 1 ;
-    string user_id = 2 ;
-}
-
-message DeleteRoomInvitation {
-    string room_id = 1 ;
-    string user_id = 2 ;
+message Keypoint {
+    float x = 1 ;
+    float y = 2 ;
+    float z = 3 ;
 }

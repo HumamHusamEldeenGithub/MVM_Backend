@@ -2,6 +2,7 @@ package mvm
 
 import (
 	"encoding/json"
+	"mvm_backend/internal/pkg/errors"
 	"mvm_backend/internal/pkg/generated/mvmPb"
 	"net/http"
 )
@@ -9,20 +10,24 @@ import (
 func (s *MVMServiceServer) CreateRoom(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value("user_id").(string)
 	if !ok {
-		http.Error(w, "User ID not found", http.StatusUnauthorized)
+		errors.NewHTTPError(w, errors.NewError("User ID not found", http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
-	var input mvmPb.Room
+	var input mvmPb.CreateRoomRequest
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	input.OwnerId = userID
 
-	room, err := s.service.CreateRoom(&input)
+	room, err := s.service.CreateRoom(&mvmPb.Room{
+		Title:       input.Title,
+		IsPrivate:   input.IsPrivate,
+		FriendsOnly: input.FriendsOnly,
+		OwnerId:     userID,
+	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

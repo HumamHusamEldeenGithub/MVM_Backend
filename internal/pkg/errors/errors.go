@@ -1,8 +1,10 @@
 package errors
 
 import (
+	"encoding/json"
 	"fmt"
 	"mvm_backend/internal/pkg/generated/mvmPb"
+	"net/http"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -72,4 +74,18 @@ func NewSocketError(message string, code int64) *mvmPb.SocketMessage_ErrorMessag
 			StatusCode: code,
 		},
 	}
+}
+
+func NewError(message string, code int64) *mvmPb.ErrorMessage {
+	return &mvmPb.ErrorMessage{
+		Error:      message,
+		StatusCode: code,
+	}
+}
+
+func NewHTTPError(w http.ResponseWriter, err interface{}, code int) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(err)
 }

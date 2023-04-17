@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/websocket"
+	"google.golang.org/protobuf/proto"
 )
 
 func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
@@ -52,24 +53,38 @@ func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Client %s has been authorized\nAnd connected to room : %s\n", userID, roomId)
 
 	for {
-
-		var msg mvmPb.SimpleSocketMessage
-
-		// Read in a new message as JSON and map it to a Message object
-		err = ws.ReadJSON(&msg)
+		messageType, message, err := ws.ReadMessage()
 		if err != nil {
+			fmt.Println("Error reading message from WebSocket:", err)
 			s.LeaveRoom(roomId, userID)
 			deleteUserFromRoom(roomId, userID)
 			break
 		}
 
-		fmt.Println(&msg)
+		// Decode the message if it's a binary message
+		if messageType == websocket.BinaryMessage {
+			// Create a Protobuf message instance and unmarshal the binary message into it
+			var messageObj mvmPb.SimpleSocketMessage
+			err := proto.Unmarshal(message, &messageObj)
+			if err != nil {
+				fmt.Println("Error decoding Protobuf message:", err)
+				s.LeaveRoom(roomId, userID)
+				deleteUserFromRoom(roomId, userID)
+				break
+			}
 
-		Broadcaster <- model.SocketMessage{
-			UserID:    userID,
-			RoomID:    roomId,
-			Message:   msg.Message,
-			Keypoints: msg.Keypoints,
+			// Process the message as needed
+			// fmt.Printf("Received message: Property1=%s, Property2=%v\n", *messageObj.Message, messageObj.Keypoints)
+			// fmt.Println(&messageObj)
+
+			protoMsg := mvmPb.SocketMessage2{
+				UserId:    userID,
+				RoomId:    roomId,
+				Message:   messageObj.Message,
+				Keypoints: messageObj.Keypoints,
+			}
+
+			Broadcaster <- protoMsg
 		}
 	}
 }

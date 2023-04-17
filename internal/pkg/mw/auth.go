@@ -2,6 +2,7 @@ package mw
 
 import (
 	"context"
+	"mvm_backend/internal/pkg/errors"
 	"mvm_backend/internal/pkg/service"
 	"net/http"
 	"strings"
@@ -18,7 +19,7 @@ func MyMiddleware(auth service.IMVMAuth) mux.MiddlewareFunc {
 
 			userID, err := auth.VerifyToken(tokenString, false)
 			if err != nil {
-				http.Error(w, "Invalid token", http.StatusUnauthorized)
+				errors.NewHTTPError(w, errors.NewError("invalid token", http.StatusUnauthorized), http.StatusUnauthorized)
 				return
 			}
 
