@@ -84,7 +84,7 @@ func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
 				Keypoints: messageObj.Keypoints,
 			}
 
-			Broadcaster <- protoMsg
+			Broadcaster <- &protoMsg
 		}
 	}
 }

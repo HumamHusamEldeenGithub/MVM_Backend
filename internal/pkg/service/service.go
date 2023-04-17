@@ -11,7 +11,7 @@ import (
 
 var Rooms = make(map[string][]*model.SocketClient)
 
-var Broadcaster = make(chan mvmPb.SocketMessage2)
+var Broadcaster = make(chan *mvmPb.SocketMessage2)
 
 var Upgrader = websocket.Upgrader{
 

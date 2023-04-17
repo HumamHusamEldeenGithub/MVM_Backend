@@ -10,19 +10,19 @@ import (
 )
 
 func (s *mvmService) HandleMessages() {
-	var msg mvmPb.SocketMessage2
+	var msg *mvmPb.SocketMessage2
 	for {
 		msg = <-Broadcaster
 		// Serialize the Protobuf message into a byte slice
-		serializedMessage, err := proto.Marshal(&msg)
+		serializedMessage, err := proto.Marshal(msg)
 		if err != nil {
 			fmt.Println("Error reading message from WebSocket:", err)
 			continue
 		}
 		for _, client := range Rooms[msg.RoomId] {
-			if client.UserID != msg.UserId {
-				continue
-			}
+			// if client.UserID != msg.UserId {
+			// 	continue
+			// }
 			fmt.Println("SEND")
 			if err := client.SocketConnection.WriteMessage(websocket.BinaryMessage, serializedMessage); err != nil {
 				log.Printf("error: %v", err)
