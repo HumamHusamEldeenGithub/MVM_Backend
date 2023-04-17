@@ -55,6 +55,9 @@ func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
 
 	for {
 		messageType, message, err := ws.ReadMessage()
+		fmt.Println(messageType)
+		fmt.Println(message)
+		fmt.Println(err)
 		if err != nil {
 			fmt.Println("Error reading message from WebSocket:", err)
 			s.LeaveRoom(roomId, userID)
