@@ -18,6 +18,7 @@ func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	ws.SetReadLimit(1024 * 1024 * 10)
 	// ensure connection close when function returns
 	defer ws.Close()
 

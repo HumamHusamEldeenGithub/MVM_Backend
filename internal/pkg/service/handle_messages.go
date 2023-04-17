@@ -23,7 +23,6 @@ func (s *mvmService) HandleMessages() {
 			// if client.UserID != msg.UserId {
 			// 	continue
 			// }
-			fmt.Println("SEND")
 			if err := client.SocketConnection.WriteMessage(websocket.BinaryMessage, serializedMessage); err != nil {
 				log.Printf("error: %v", err)
 				client.SocketConnection.Close()
