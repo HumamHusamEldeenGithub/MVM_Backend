@@ -19,8 +19,8 @@ func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 	ws.SetReadLimit(1024 * 1024 * 10)
-	// ensure connection close when function returns
-	//defer ws.Close()
+
+	defer ws.Close()
 
 	fmt.Println("Client has been connected ")
 
@@ -54,7 +54,6 @@ func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Client %s has been authorized\nAnd connected to room : %s\n", userID, roomId)
 
 	for {
-		fmt.Println("Enter Listening loop .. reading a message")
 		_, message, err := ws.ReadMessage()
 		if err != nil {
 			fmt.Println("Error reading message from WebSocket:", err)
@@ -73,10 +72,6 @@ func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		// Process the message as needed
-		// fmt.Printf("Received message: Property1=%s, Property2=%v\n", *messageObj.Message, messageObj.Keypoints)
-		// fmt.Println(&messageObj)
-
 		protoMsg := mvmPb.SocketMessage2{
 			UserId:    userID,
 			RoomId:    roomId,
@@ -85,7 +80,6 @@ func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
 		}
 
 		Broadcaster <- &protoMsg
-
 	}
 }
 
