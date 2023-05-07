@@ -21,6 +21,7 @@ var Upgrader = websocket.Upgrader{
 
 	},
 }
+var Clients map[string]*Client = make(map[string]*Client)
 
 type IMVMStore interface {
 	CreateUser(user *model.User) (string, error)

@@ -131,6 +131,10 @@ message UserProfile {
     string email = 3;
 }
 
+message GetIceResponse{
+    repeated string ices = 1 ;
+}
+
 message Room {
     string id = 1;
     string owner_id = 2 ; 
