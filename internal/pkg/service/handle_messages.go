@@ -23,11 +23,11 @@ func (s *mvmService) HandleMessages() {
 			// if client.UserID != msg.UserId {
 			// 	continue
 			// }
-			if err := client.SocketConnection.WriteMessage(websocket.BinaryMessage, serializedMessage); err != nil {
+			if err := client.Connection.WriteMessage(websocket.BinaryMessage, serializedMessage); err != nil {
 				log.Printf("error: %v", err)
-				client.SocketConnection.Close()
-				s.LeaveRoom(msg.RoomId, client.UserID)
-				deleteUserFromRoom(msg.RoomId, client.UserID)
+				client.Connection.Close()
+				s.LeaveRoom(msg.RoomId, client.ID)
+				deleteUserFromRoom(msg.RoomId, client.ID)
 			}
 		}
 	}

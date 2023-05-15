@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"mvm_backend/internal/pkg/model"
 	"net/http"
 	"strings"
 
@@ -16,25 +17,6 @@ type Message struct {
 	ToId          string      `json:"toId"`
 	Data          interface{} `json:"data"`
 	IceCandidates []string    `json:"iceCandidates"`
-}
-
-type OfferMessage struct {
-	SDP string `json:"sdp"`
-}
-
-type CandidateMessage struct {
-	Candidate string `json:"candidate"`
-}
-
-type ResponseMessage struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
-}
-
-type Client struct {
-	ID            string
-	Connection    *websocket.Conn
-	ICECandidates []string
 }
 
 var upgrader = websocket.Upgrader{
@@ -58,17 +40,44 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 	tokenString := strings.ReplaceAll(authHeader, "Bearer ", "")
 	userID, err := s.auth.VerifyToken(tokenString, false)
 	if err != nil {
-		handleError(conn, "client connection has been terminated ", http.StatusUnauthorized)
+		handleError(conn, "client connection has been terminated , invalid token.", http.StatusUnauthorized)
 		return
 	}
 
 	// Register client
-	client := &Client{
+	client := &model.SocketClient{
 		ID:         userID,
 		Connection: conn,
 	}
+
+	roomId := r.URL.Query().Get("room")
+
+	if len(roomId) == 0 {
+		handleError(conn, "room id not found", http.StatusNotFound)
+		return
+	}
+
+	// if err := s.CheckRoomAvailability(roomId, userID); err != nil {
+	// 	handleError(conn, "Not authorized to enter this room ", http.StatusUnauthorized)
+	// 	return
+	// }
+
+	Rooms[roomId] = append(Rooms[roomId], client)
+
+	// if err := s.JoinRoom(roomId, userID); err != nil {
+	// 	handleError(conn, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+
 	Clients[client.ID] = client
 	log.Printf("Registered client %s\n", client.ID)
+
+	// Push user_enter event to all room members
+	var message Message = Message{
+		Type:   "user_enter",
+		FromId: userID,
+	}
+	forwardMessageToRoom(userID, roomId, &message)
 
 	// Receive and handle messages from client
 	for {
@@ -96,7 +105,7 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 			if err != nil {
 				log.Println("Failed to forward offer:", err)
 			}
-			//break
+
 		case "answer":
 			// Forward answer to other client
 			message.FromId = userID
@@ -105,7 +114,6 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 			if err != nil {
 				log.Println("Failed to forward answer:", err)
 			}
-			//break
 		case "ice":
 			// Add ICE candidate to client
 			fmt.Println(message.Data)
@@ -114,7 +122,8 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 			client := Clients[clientID]
 			client.ICECandidates = append(client.ICECandidates, data)
 			log.Printf("Added ICE candidate to client %s\n", clientID)
-			//break
+
+			forwardMessageToRoom(userID, roomId, &message)
 
 		case "getIce":
 			message.Data = Clients[message.ToId].ICECandidates
@@ -125,7 +134,6 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 
 		default:
 			log.Println("Unknown message type:", message.Type)
-			break
 		}
 	}
 	// Close connection and remove client from list
@@ -136,6 +144,7 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 			break
 		}
 	}
+	deleteUserFromRoom(roomId, userID)
 }
 
 func forwardMessage(clientID string, message *Message) error {
@@ -149,4 +158,31 @@ func forwardMessage(clientID string, message *Message) error {
 		return err
 	}
 	return nil
+}
+
+func forwardMessageToRoom(clientID, roomID string, message *Message) {
+	for _, client := range Rooms[roomID] {
+		if clientID == client.ID {
+			continue
+		}
+		if client == nil {
+			log.Printf("client %s not found", clientID)
+			continue
+		}
+		log.Printf("Forward %s to %s", *&message.Type, client.ID)
+		err := client.Connection.WriteJSON(message)
+		if err != nil {
+			log.Printf("Error in forwarding  %v ", err)
+			continue
+		}
+	}
+}
+
+func deleteUserFromRoom(roomId, userId string) {
+	for i, client := range Rooms[roomId] {
+		if client.ID == userId {
+			Rooms[roomId][i] = Rooms[roomId][len(Rooms[roomId])-1]
+			Rooms[roomId] = Rooms[roomId][:len(Rooms[roomId])-1]
+		}
+	}
 }

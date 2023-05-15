@@ -44,7 +44,7 @@ func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Rooms[roomId] = append(Rooms[roomId], &model.SocketClient{UserID: userID, SocketConnection: ws})
+	Rooms[roomId] = append(Rooms[roomId], &model.SocketClient{ID: userID, Connection: ws})
 
 	if err := s.JoinRoom(roomId, userID); err != nil {
 		handleError(ws, err.Error(), http.StatusInternalServerError)
@@ -80,15 +80,6 @@ func (s *mvmService) HandleConnections(w http.ResponseWriter, r *http.Request) {
 		}
 
 		Broadcaster <- &protoMsg
-	}
-}
-
-func deleteUserFromRoom(roomId, userId string) {
-	for i, client := range Rooms[roomId] {
-		if client.UserID == userId {
-			Rooms[roomId][i] = Rooms[roomId][len(Rooms[roomId])-1]
-			Rooms[roomId] = Rooms[roomId][:len(Rooms[roomId])-1]
-		}
 	}
 }
 

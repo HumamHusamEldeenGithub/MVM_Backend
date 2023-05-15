@@ -3,6 +3,7 @@ package model
 import "github.com/gorilla/websocket"
 
 type SocketClient struct {
-	UserID           string
-	SocketConnection *websocket.Conn
+	ID            string
+	Connection    *websocket.Conn
+	ICECandidates []string
 }
