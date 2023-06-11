@@ -20,7 +20,7 @@ func (s *MVMServiceServer) AddFriend(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := s.service.AddFriend(userID, input.FriendId); err != nil {
-		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusInternalServerError), http.StatusInternalServerError)
+		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

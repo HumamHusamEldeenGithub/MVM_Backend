@@ -32,10 +32,7 @@ type IMVMService interface {
 	AddFriend(userID, friendID string) error
 	DeleteFriend(userID, friendID string) error
 
-	HandleConnections(w http.ResponseWriter, r *http.Request)
-	HandleMessages()
 	HandleWebSocketRTC(w http.ResponseWriter, r *http.Request)
-	GetIce(userID string) ([]string, error)
 }
 
 func NewIMVMServiceServer(service IMVMService) *MVMServiceServer {

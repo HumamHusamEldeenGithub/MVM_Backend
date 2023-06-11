@@ -17,7 +17,7 @@ func (s *MVMServiceServer) GetProfile(w http.ResponseWriter, r *http.Request) {
 
 	res, err := s.service.GetProfile(userID)
 	if err != nil {
-		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusInternalServerError), http.StatusInternalServerError)
+		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

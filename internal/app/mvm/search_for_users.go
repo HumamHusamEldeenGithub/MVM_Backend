@@ -17,7 +17,7 @@ func (s *MVMServiceServer) SearchForUsers(w http.ResponseWriter, r *http.Request
 
 	res, err := s.service.SearchForUsers(input.SearchInput)
 	if err != nil {
-		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusInternalServerError), http.StatusInternalServerError)
+		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusNotFound), http.StatusNotFound)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

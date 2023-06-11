@@ -21,7 +21,7 @@ func (s *MVMServiceServer) CreateUser(w http.ResponseWriter, r *http.Request) {
 		Password: input.Password,
 	})
 	if err != nil {
-		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusInternalServerError), http.StatusInternalServerError)
+		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

@@ -20,7 +20,7 @@ func (s *MVMServiceServer) DeleteRoomInvitation(w http.ResponseWriter, r *http.R
 	}
 
 	if err := s.service.DeleteRoomInvitation(userID, input.RoomId, input.UserId); err != nil {
-		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusInternalServerError), http.StatusInternalServerError)
+		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

@@ -53,11 +53,7 @@ func SetupRouter(router *mux.Router, mvmServer *mvm.MVMServiceServer, jwt_manage
 	router.HandleFunc("/login", mvmServer.LoginUser).Methods("POST")
 	router.HandleFunc("/refresh_token", mvmServer.LoginByRefreshToken).Methods("POST")
 	router.HandleFunc("/create", mvmServer.CreateUser).Methods("POST")
-
-	router.HandleFunc("/websocket", mvmServer.HandleConnections)
 	router.HandleFunc("/wsrtc", mvmServer.HandleWebSocketRTC)
-	router.HandleFunc("/ice", mvmServer.GetIce).Methods("GET")
-	go mvmServer.HandleMessages()
 
 	userGroup := router.PathPrefix("/user").Subrouter()
 	userGroup.Use(mw.MyMiddleware(jwt_manager))

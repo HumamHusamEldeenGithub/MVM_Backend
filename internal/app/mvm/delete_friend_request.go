@@ -20,7 +20,7 @@ func (s *MVMServiceServer) DeleteFriendRequest(w http.ResponseWriter, r *http.Re
 	}
 
 	if err := s.service.DeleteFriendRequest(userID, input.FriendId); err != nil {
-		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusInternalServerError), http.StatusInternalServerError)
+		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

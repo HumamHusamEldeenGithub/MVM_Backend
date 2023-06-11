@@ -2,12 +2,8 @@ package errors
 
 import (
 	"encoding/json"
-	"fmt"
 	"mvm_backend/internal/pkg/generated/mvmPb"
 	"net/http"
-
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 // ErrorCode predefined error codes
@@ -40,31 +36,29 @@ const (
 	msgExpiredTokenError    = "expired token"
 )
 
-type errorDesc struct {
-	msg      string
-	grpcCode codes.Code
+type ErrorDesc struct {
+	Message string
+	Code    int32
 }
 
-var errors = map[ErrorCode]*errorDesc{
-	UnknownError:         {msg: msgUnknownError, grpcCode: codes.Unknown},
-	Unauthenticated:      {msg: msgUnauthenticated, grpcCode: codes.PermissionDenied},
-	UserIDInvalid:        {msg: msgUserIDInvalid, grpcCode: codes.InvalidArgument},
-	InvalidPasswordError: {msg: msgInvalidPasswordError, grpcCode: codes.InvalidArgument},
-	InvalidUsernameError: {msg: msgInvalidUsernameError, grpcCode: codes.InvalidArgument},
-	ExpiredTokenError:    {msg: msgExpiredTokenError, grpcCode: codes.Code(401)},
+var ErrorsList = map[ErrorCode]*ErrorDesc{
+	UnknownError:         {Message: msgUnknownError, Code: 520},
+	Unauthenticated:      {Message: msgUnauthenticated, Code: http.StatusUnauthorized},
+	UserIDInvalid:        {Message: msgUserIDInvalid, Code: http.StatusBadRequest},
+	InvalidPasswordError: {Message: msgInvalidPasswordError, Code: http.StatusBadRequest},
+	InvalidUsernameError: {Message: msgInvalidUsernameError, Code: http.StatusBadRequest},
+	ExpiredTokenError:    {Message: msgExpiredTokenError, Code: http.StatusUnauthorized},
 }
 
-// Errorf creates error with msg arguments for grpc response
-func Errorf(code ErrorCode, a ...interface{}) error {
-	if errors[code] == nil {
-		return status.Error(codes.Unknown, errors[UnknownError].msg)
+func (err ErrorDesc) Error() string {
+	return err.Message
+}
+
+func NewErrorDesc(msg string, code int32) ErrorDesc {
+	return ErrorDesc{
+		Message: msg,
+		Code:    code,
 	}
-	d := errors[code]
-	m := d.msg
-	if a != nil {
-		m = fmt.Sprintf(m, a)
-	}
-	return status.Error(d.grpcCode, m)
 }
 
 func NewSocketError(message string, code int64) *mvmPb.SocketMessage_ErrorMessage {

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"mvm_backend/internal/pkg/errors"
+	"mvm_backend/internal/pkg/generated/mvmPb"
 	"mvm_backend/internal/pkg/model"
 	"net/http"
 	"strings"
@@ -57,17 +59,17 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// if err := s.CheckRoomAvailability(roomId, userID); err != nil {
-	// 	handleError(conn, "Not authorized to enter this room ", http.StatusUnauthorized)
-	// 	return
-	// }
+	if err := s.CheckRoomAvailability(roomId, userID); err != nil {
+		handleError(conn, "Not authorized to enter this room ", http.StatusUnauthorized)
+		return
+	}
 
 	Rooms[roomId] = append(Rooms[roomId], client)
 
-	// if err := s.JoinRoom(roomId, userID); err != nil {
-	// 	handleError(conn, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
+	if err := s.JoinRoom(roomId, userID); err != nil {
+		handleError(conn, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	Clients[client.ID] = client
 	log.Printf("Registered client %s\n", client.ID)
@@ -144,6 +146,7 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 			break
 		}
 	}
+	s.LeaveRoom(roomId, userID)
 	deleteUserFromRoom(roomId, userID)
 }
 
@@ -185,4 +188,18 @@ func deleteUserFromRoom(roomId, userId string) {
 			Rooms[roomId] = Rooms[roomId][:len(Rooms[roomId])-1]
 		}
 	}
+	
+}
+
+func handleError(ws *websocket.Conn, message string, code int64) {
+	errMsg := &mvmPb.SocketMessage{
+		Type: mvmPb.SocketMessageType_ERROR,
+		Data: errors.NewSocketError(message, code),
+	}
+	log.Printf("error: %v", errMsg)
+	if err := ws.WriteJSON(errMsg); err != nil {
+		log.Printf("error: %v", err)
+	}
+	ws.Close()
+	return
 }

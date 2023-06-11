@@ -13,7 +13,7 @@ func (s *mvmService) LoginUser(username, password string) (*jwt_manager.JWTToken
 	}
 
 	if !utils.ComparePasswords(user.Password, password) {
-		return nil, errors.Errorf(errors.InvalidPasswordError)
+		return nil, errors.ErrorsList[errors.InvalidPasswordError]
 	}
 	tokens, err := s.auth.GenerateToken(user, true)
 	if err != nil {

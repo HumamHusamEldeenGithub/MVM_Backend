@@ -115,7 +115,7 @@ func (s *authService) GetUserClaims(tokenString string, isRefreshToken bool) (*U
 		fmt.Println("Error parsing JWT token:", err)
 		v, _ := err.(*jwt.ValidationError)
 		if v.Errors == jwt.ValidationErrorExpired {
-			return nil, errors.Errorf(errors.ExpiredTokenError)
+			return nil, errors.ErrorsList[errors.ExpiredTokenError]
 		}
 		return nil, err
 	}

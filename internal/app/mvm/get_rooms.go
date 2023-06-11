@@ -16,7 +16,7 @@ func (s *MVMServiceServer) GetRooms(w http.ResponseWriter, r *http.Request) {
 
 	rooms, err := s.service.GetRooms()
 	if err != nil {
-		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusInternalServerError), http.StatusInternalServerError)
+		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
