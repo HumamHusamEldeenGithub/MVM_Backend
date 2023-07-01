@@ -19,7 +19,7 @@ func MyMiddleware(auth service.IMVMAuth) mux.MiddlewareFunc {
 
 			userID, err := auth.VerifyToken(tokenString, false)
 			if err != nil {
-				errors.NewHTTPError(w, errors.NewError("invalid token", http.StatusUnauthorized), http.StatusUnauthorized)
+				errors.NewHTTPError(w, errors.NewError(err.Error(), int64(err.(errors.ErrorDesc).Code)), int(err.(errors.ErrorDesc).Code))
 				return
 			}
 

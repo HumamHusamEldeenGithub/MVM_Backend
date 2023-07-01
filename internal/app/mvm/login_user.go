@@ -16,8 +16,7 @@ func (s *MVMServiceServer) LoginUser(w http.ResponseWriter, r *http.Request) {
 
 	res, err := s.service.LoginUser(input.Username, input.Password)
 	if err != nil {
-
-		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusUnauthorized), http.StatusUnauthorized)
+		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 

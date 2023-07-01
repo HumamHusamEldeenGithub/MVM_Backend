@@ -1,11 +1,10 @@
 package jwt_manager
 
 import (
-	"encoding/json"
 	"fmt"
 	"mvm_backend/internal/pkg/errors"
 	"mvm_backend/internal/pkg/model"
-	"strings"
+	"net/http"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -68,36 +67,7 @@ func (s *authService) VerifyToken(tokenString string, isRefreshToken bool) (stri
 		return "", err
 	}
 
-	if time.Now().Unix() > claims.ExpiresAt {
-		return "", fmt.Errorf("JWT token expired")
-	}
-
 	return claims.UserID, nil
-}
-
-func GetUserIDFromToken(token string) (string, error) {
-	parts := strings.Split(token, ".")
-	if len(parts) != 3 {
-		return "", fmt.Errorf("Invalid token format")
-	}
-
-	claimsBytes, err := jwt.DecodeSegment(parts[1])
-	if err != nil {
-		return "", err
-	}
-
-	var claims jwt.MapClaims
-	err = json.Unmarshal(claimsBytes, &claims)
-	if err != nil {
-		return "", err
-	}
-	fmt.Println(claims)
-	userID, ok := claims["userid"].(string)
-	if !ok {
-		return "", fmt.Errorf("Invalid userid")
-	}
-
-	return userID, nil
 }
 
 func (s *authService) GetUserClaims(tokenString string, isRefreshToken bool) (*UserClaims, error) {
@@ -117,12 +87,12 @@ func (s *authService) GetUserClaims(tokenString string, isRefreshToken bool) (*U
 		if v.Errors == jwt.ValidationErrorExpired {
 			return nil, errors.ErrorsList[errors.ExpiredTokenError]
 		}
-		return nil, err
+		return nil, errors.NewErrorDesc(err.Error(), http.StatusUnauthorized)
 	}
 
 	claims, ok := token.Claims.(*UserClaims)
 	if !ok || !token.Valid {
-		return nil, fmt.Errorf("invalid JWT token")
+		return nil, errors.NewErrorDesc("invalid JWT token", http.StatusUnauthorized)
 	}
 	return claims, nil
 }

@@ -30,7 +30,7 @@ const (
 	msgUnknownError         = "unknown error"
 	msgUnauthenticated      = "unauthenticated access"
 	msgUserIDInvalid        = "invalid user id"
-	msgInvalidEmailError    = "invalid username , make sure you enter a username of length of 4 or more characters"
+	msgInvalidEmailError    = "invalid username , make sure you enter a valid email"
 	msgInvalidUsernameError = "invalid username , make sure you enter a username of length of 4 or more characters"
 	msgInvalidPasswordError = "invalid password , make sure you enter a correct password of length of 8 or more characters"
 	msgExpiredTokenError    = "expired token"
@@ -41,13 +41,13 @@ type ErrorDesc struct {
 	Code    int32
 }
 
-var ErrorsList = map[ErrorCode]*ErrorDesc{
+var ErrorsList = map[ErrorCode]ErrorDesc{
 	UnknownError:         {Message: msgUnknownError, Code: 520},
 	Unauthenticated:      {Message: msgUnauthenticated, Code: http.StatusUnauthorized},
 	UserIDInvalid:        {Message: msgUserIDInvalid, Code: http.StatusBadRequest},
 	InvalidPasswordError: {Message: msgInvalidPasswordError, Code: http.StatusBadRequest},
 	InvalidUsernameError: {Message: msgInvalidUsernameError, Code: http.StatusBadRequest},
-	ExpiredTokenError:    {Message: msgExpiredTokenError, Code: http.StatusUnauthorized},
+	ExpiredTokenError:    {Message: msgExpiredTokenError, Code: 403},
 }
 
 func (err ErrorDesc) Error() string {

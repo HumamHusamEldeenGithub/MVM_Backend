@@ -11,7 +11,7 @@ import (
 func (s *MVMServiceServer) GetProfile(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value("user_id").(string)
 	if !ok {
-		errors.NewHTTPError(w, errors.NewError("User ID not found", http.StatusUnauthorized), http.StatusUnauthorized)
+		errors.NewHTTPError(w, errors.NewError("User ID not found", http.StatusNotFound), http.StatusNotFound)
 		return
 	}
 

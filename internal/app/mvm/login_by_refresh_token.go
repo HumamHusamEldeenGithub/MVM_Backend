@@ -16,7 +16,7 @@ func (s *MVMServiceServer) LoginByRefreshToken(w http.ResponseWriter, r *http.Re
 
 	res, err := s.service.LoginByRefreshToken(input.RefreshToken)
 	if err != nil {
-		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusUnauthorized), http.StatusUnauthorized)
+		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
