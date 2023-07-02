@@ -39,6 +39,7 @@ message GetProfileRequest {}
 
 message GetProfileResponse {
     UserProfile profile = 1;
+    repeated Room user_rooms = 2;
 }
 
 message GetUserByUsernameRequest {
@@ -47,6 +48,7 @@ message GetUserByUsernameRequest {
 
 message GetUserByUsernameResponse {
     UserProfile profile = 1;
+    repeated Room user_rooms = 2;
 }
 
 message CreateFriendRequestRequest {
@@ -100,6 +102,14 @@ message CreateRoomResponse{
 message GetRoomRequest {}
 
 message GetRoomsResponse {
+    repeated Room rooms = 1 ; 
+}
+
+message GetUserRoomsRequest {
+    string user_id = 1;
+}
+
+message GetUserRoomsResponse {
     repeated Room rooms = 1 ; 
 }
 

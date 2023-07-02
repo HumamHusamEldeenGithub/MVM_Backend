@@ -31,7 +31,8 @@ type IMVMStore interface {
 	SearchForUsers(searchInput string) ([]*model.User, error)
 
 	CreateRoom(room *mvmPb.Room) (*mvmPb.Room, error)
-	GetRooms() ([]*mvmPb.Room, error)
+	GetRooms(searchQuery string) ([]*mvmPb.Room, error)
+	GetUserRooms(userId string) ([]*mvmPb.Room, error)
 	GetRoom(id string) (*mvmPb.Room, error)
 	DeleteRoom(roomId string) error
 	JoinRoom(roomId, userId string) error

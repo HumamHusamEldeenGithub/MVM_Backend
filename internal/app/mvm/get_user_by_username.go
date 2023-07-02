@@ -14,13 +14,20 @@ func (s *MVMServiceServer) GetUserByUsername(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	res, err := s.service.GetUserByUsername(input.Username)
+	profile, err := s.service.GetUserByUsername(input.Username)
 	if err != nil {
 		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
+	rooms, err := s.service.GetUserRooms(profile.ID)
+	if err != nil {
+		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(&mvmPb.GetUserByUsernameResponse{
-		Profile: encodeUserProfile(res),
+		Profile:   encodeUserProfile(profile),
+		UserRooms: rooms,
 	})
 }

@@ -7,22 +7,24 @@ import (
 	"net/http"
 )
 
-func (s *MVMServiceServer) GetRooms(w http.ResponseWriter, r *http.Request) {
+func (s *MVMServiceServer) GetUserRooms(w http.ResponseWriter, r *http.Request) {
 	_, ok := r.Context().Value("user_id").(string)
 	if !ok {
 		errors.NewHTTPError(w, errors.NewError("User ID not found", http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	params := r.URL.Query()
 
-	// Extract the value of the "search" parameter
-	searchQuery := params.Get("search")
+	var input mvmPb.GetUserRoomsRequest
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
 
-	rooms, err := s.service.GetRooms(searchQuery)
+	rooms, err := s.service.GetUserRooms(input.UserId)
 	if err != nil {
 		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(mvmPb.GetRoomsResponse{Rooms: rooms})
+	json.NewEncoder(w).Encode(mvmPb.GetUserRoomsResponse{Rooms: rooms})
 }
