@@ -5,6 +5,7 @@ import (
 	"mvm_backend/internal/pkg/jwt_manager"
 	"mvm_backend/internal/pkg/model"
 	"net/http"
+	"sync"
 
 	"github.com/gorilla/websocket"
 )
@@ -21,7 +22,16 @@ var Upgrader = websocket.Upgrader{
 
 	},
 }
-var Clients map[string]*model.SocketClient = make(map[string]*model.SocketClient)
+
+type ClientsMutex struct {
+	clients map[string]*model.SocketClient
+	mu      sync.Mutex
+}
+
+var Clients = ClientsMutex{
+	clients: make(map[string]*model.SocketClient),
+	mu:      sync.Mutex{},
+}
 
 type IMVMStore interface {
 	CreateUser(user *model.User) (string, error)

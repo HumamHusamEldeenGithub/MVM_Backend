@@ -52,34 +52,11 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 		Connection: conn,
 	}
 
-	roomId := r.URL.Query().Get("room")
-
-	if len(roomId) == 0 {
-		handleError(conn, "room id not found", http.StatusNotFound)
-		return
-	}
-
-	if err := s.CheckRoomAvailability(roomId, userID); err != nil {
-		handleError(conn, "Not authorized to enter this room ", http.StatusUnauthorized)
-		return
-	}
-
-	Rooms[roomId] = append(Rooms[roomId], client)
-
-	if err := s.JoinRoom(roomId, userID); err != nil {
-		handleError(conn, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	Clients[client.ID] = client
+	// TODO : Use mutex to update
+	Clients.mu.Lock()
+	Clients.clients[client.ID] = client
 	log.Printf("Registered client %s\n", client.ID)
-
-	// Push user_enter event to all room members
-	var message Message = Message{
-		Type:   "user_enter",
-		FromId: userID,
-	}
-	forwardMessageToRoom(userID, roomId, &message)
+	Clients.mu.Unlock()
 
 	// Receive and handle messages from client
 	for {
@@ -99,6 +76,42 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 		}
 
 		switch message.Type {
+
+		case "join_room":
+			// Joining room
+			roomId := message.Data.(string)
+
+			if len(roomId) == 0 {
+				handleError(conn, "room id not found", http.StatusNotFound)
+				return
+			}
+
+			if err := s.CheckRoomAvailability(roomId, userID); err != nil {
+				handleError(conn, "Not authorized to enter this room ", http.StatusUnauthorized)
+				return
+			}
+
+			Rooms[roomId] = append(Rooms[roomId], client)
+
+			if err := s.JoinRoom(roomId, userID); err != nil {
+				handleError(conn, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			client.RoomID = roomId
+			// Push user_enter event to all room members
+			var message Message = Message{
+				Type:   "user_enter",
+				FromId: userID,
+			}
+			forwardMessageToRoom(userID, roomId, &message)
+
+		case "leave_room":
+			if len(client.RoomID) != 0 {
+				s.LeaveRoom(client.RoomID, userID)
+				deleteUserFromRoom(client.RoomID, userID)
+			}
+
 		case "offer":
 			// Forward offer to other client
 			message.FromId = userID
@@ -121,14 +134,16 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 			fmt.Println(message.Data)
 			data := message.Data.(string)
 			clientID := userID
-			client := Clients[clientID]
+			client := Clients.clients[clientID]
 			client.ICECandidates = append(client.ICECandidates, data)
 			log.Printf("Added ICE candidate to client %s\n", clientID)
 
-			forwardMessageToRoom(userID, roomId, &message)
+			forwardMessageToRoom(userID, client.RoomID, &message)
 
 		case "getIce":
-			message.Data = Clients[message.ToId].ICECandidates
+			Clients.mu.Lock()
+			message.Data = Clients.clients[message.ToId].ICECandidates
+			Clients.mu.Unlock()
 			err = forwardMessage(userID, &message)
 			if err != nil {
 				log.Println("Failed to forward answer:", err)
@@ -139,20 +154,28 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 		}
 	}
 	// Close connection and remove client from list
-	for clientID, client := range Clients {
+	Clients.mu.Lock()
+	for clientID, client := range Clients.clients {
 		if client.Connection == conn {
 			log.Printf("Unregistered client %s\n", clientID)
-			delete(Clients, clientID)
+			delete(Clients.clients, clientID)
 			break
 		}
 	}
-	s.LeaveRoom(roomId, userID)
-	deleteUserFromRoom(roomId, userID)
+	Clients.mu.Unlock()
+	// Leave room
+	if len(client.RoomID) != 0 {
+		s.LeaveRoom(client.RoomID, userID)
+		deleteUserFromRoom(client.RoomID, userID)
+	}
+
 }
 
 func forwardMessage(clientID string, message *Message) error {
 	log.Printf("Forward %s to %s", *&message.Type, clientID)
-	client := Clients[clientID]
+	Clients.mu.Lock()
+	client := Clients.clients[clientID]
+	Clients.mu.Unlock()
 	if client == nil {
 		return fmt.Errorf("client %s not found", clientID)
 	}
@@ -188,7 +211,7 @@ func deleteUserFromRoom(roomId, userId string) {
 			Rooms[roomId] = Rooms[roomId][:len(Rooms[roomId])-1]
 		}
 	}
-	
+
 }
 
 func handleError(ws *websocket.Conn, message string, code int64) {
