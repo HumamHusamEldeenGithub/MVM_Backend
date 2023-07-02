@@ -7,4 +7,5 @@ type SocketClient struct {
 	Connection    *websocket.Conn
 	ICECandidates []string
 	RoomID        string
+	Friends       []string
 }

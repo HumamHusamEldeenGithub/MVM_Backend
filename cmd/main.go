@@ -73,9 +73,10 @@ func SetupRouter(router *mux.Router, mvmServer *mvm.MVMServiceServer, jwt_manage
 	friendsGroup := router.PathPrefix("/friends").Subrouter()
 	friendsGroup.Use(mw.MyMiddleware(jwt_manager))
 	friendsGroup.HandleFunc("", mvmServer.GetFriends).Methods("GET")
-	friendsGroup.HandleFunc("/send", mvmServer.CreateFriendRequest).Methods("POST")
-	friendsGroup.HandleFunc("/ignore", mvmServer.DeleteFriendRequest).Methods("POST")
-	friendsGroup.HandleFunc("/accept", mvmServer.AddFriend).Methods("POST")
+	friendsGroup.HandleFunc("/requests/pending", mvmServer.GetPendingFriends).Methods("GET")
+	friendsGroup.HandleFunc("/requests/send", mvmServer.CreateFriendRequest).Methods("POST")
+	friendsGroup.HandleFunc("/requests/delete", mvmServer.DeleteFriendRequest).Methods("POST")
+	friendsGroup.HandleFunc("/add", mvmServer.AddFriend).Methods("POST")
 	friendsGroup.HandleFunc("/delete", mvmServer.DeleteFriend).Methods("POST")
 
 }

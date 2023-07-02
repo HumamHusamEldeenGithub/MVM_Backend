@@ -8,14 +8,14 @@ import (
 	"net/http"
 )
 
-func (s *MVMServiceServer) GetFriends(w http.ResponseWriter, r *http.Request) {
+func (s *MVMServiceServer) GetPendingFriends(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value("user_id").(string)
 	if !ok {
 		errors.NewHTTPError(w, errors.NewError("User ID not found", http.StatusNotFound), http.StatusNotFound)
 		return
 	}
 
-	usersIds, err := s.service.GetFriends(userID)
+	usersIds, err := s.service.GetPendingFriends(userID)
 	if err != nil {
 		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -31,13 +31,5 @@ func (s *MVMServiceServer) GetFriends(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(mvmPb.GetFriendsResponse{Profiles: encodeUserProfiles(users)})
-}
-
-func encodeUserProfiles(profiles []*model.User) []*mvmPb.UserProfile {
-	out := make([]*mvmPb.UserProfile, len(profiles))
-	for i, profile := range profiles {
-		out[i] = encodeUserProfile(profile)
-	}
-	return out
+	json.NewEncoder(w).Encode(mvmPb.GetPendingFriendsResponse{Profiles: encodeUserProfiles(users)})
 }

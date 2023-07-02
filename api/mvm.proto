@@ -77,8 +77,14 @@ message DeleteFriendResponse {}
 
 message GetFriendsRequest {}
 
-message GetFriendsReposnes {
-    repeated string ids = 1;
+message GetFriendsResponse {
+    repeated UserProfile profiles = 1;
+}
+
+message GetPendingFriendsRequest {}
+
+message GetPendingFriendsResponse {
+    repeated UserProfile profiles = 1;
 }
 
 message SearchForUsersRequest {

@@ -2,6 +2,7 @@ package store
 
 import (
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -19,5 +20,13 @@ func (repository *MVMRepository) AddFriend(userID, friendID string) error {
 	if err != nil {
 		return err
 	}
+
+	filter = bson.M{"id": userID}
+	update = bson.M{"$pull": bson.M{"pending": friendID}}
+	_, err = repository.friendsCollection.UpdateOne(repository.ctx, filter, update)
+	if err != nil && err != mongo.ErrNoDocuments {
+		return err
+	}
+
 	return nil
 }

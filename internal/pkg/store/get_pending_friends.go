@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (repository *MVMRepository) GetFriends(userID string) ([]string, error) {
+func (repository *MVMRepository) GetPendingFriends(userID string) ([]string, error) {
 	filter := bson.D{{Key: "id", Value: userID}}
 	var friends model.Friends
 	if err := repository.friendsCollection.FindOne(repository.ctx, filter).Decode(&friends); err != nil {
@@ -15,5 +15,5 @@ func (repository *MVMRepository) GetFriends(userID string) ([]string, error) {
 			return nil, err
 		}
 	}
-	return friends.Friends, nil
+	return friends.Pending, nil
 }

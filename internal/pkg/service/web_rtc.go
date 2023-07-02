@@ -21,6 +21,11 @@ type Message struct {
 	IceCandidates []string    `json:"iceCandidates"`
 }
 
+type OnlineStatus struct {
+	ID       string `json:"id"`
+	IsOnline bool   `json:"isOnline"`
+}
+
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -46,17 +51,29 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	friends, err := s.GetFriends(userID)
+	if err != nil {
+		// TODO : handle err
+		fmt.Println(err)
+	}
+
 	// Register client
 	client := &model.SocketClient{
 		ID:         userID,
 		Connection: conn,
+		Friends:    friends,
 	}
 
-	// TODO : Use mutex to update
 	Clients.mu.Lock()
 	Clients.clients[client.ID] = client
 	log.Printf("Registered client %s\n", client.ID)
 	Clients.mu.Unlock()
+
+	// get online friends
+	s.GetOnlineFriendStatus(userID)
+
+	// push online event
+	PushOnlineStatusToFriends(client, true)
 
 	// Receive and handle messages from client
 	for {
@@ -158,6 +175,8 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 	for clientID, client := range Clients.clients {
 		if client.Connection == conn {
 			log.Printf("Unregistered client %s\n", clientID)
+			// push offline event
+			PushOnlineStatusToFriends(client, false)
 			delete(Clients.clients, clientID)
 			break
 		}
@@ -211,6 +230,67 @@ func deleteUserFromRoom(roomId, userId string) {
 			Rooms[roomId] = Rooms[roomId][:len(Rooms[roomId])-1]
 		}
 	}
+
+}
+
+func PushOnlineStatusToFriends(client *model.SocketClient, isOnline bool) {
+	friendMap := make(map[string]bool)
+	for _, friend := range client.Friends {
+		friendMap[friend] = true
+	}
+
+	Clients.mu.Lock()
+	for _, peer := range Clients.clients {
+		if friendMap[peer.ID] {
+			message := &Message{
+				Type:   "user_status_changed",
+				ToId:   peer.ID,
+				FromId: client.ID,
+				Data: &OnlineStatus{
+					ID:       client.ID,
+					IsOnline: isOnline,
+				},
+			}
+			forwardMessage(peer.ID, message)
+		}
+	}
+	Clients.mu.Unlock()
+}
+
+func (s *mvmService) GetOnlineFriendStatus(userID string) {
+	friends, err := s.GetFriends(userID)
+	if err != nil {
+		log.Printf("error: %v", err)
+	}
+
+	Clients.mu.Lock()
+	Clients.clients[userID].Friends = friends
+	Clients.mu.Unlock()
+
+	friendMap := make(map[string]bool)
+	for _, friend := range friends {
+		friendMap[friend] = true
+	}
+
+	onlineStatusList := make([]*OnlineStatus, 0)
+
+	Clients.mu.Lock()
+	for _, peer := range Clients.clients {
+		if friendMap[peer.ID] {
+			onlineStatusList = append(onlineStatusList, &OnlineStatus{
+				ID:       peer.ID,
+				IsOnline: true,
+			})
+		}
+	}
+	Clients.mu.Unlock()
+
+	message := &Message{
+		Type: "get_users_online_status_list",
+		ToId: userID,
+		Data: onlineStatusList,
+	}
+	forwardMessage(userID, message)
 
 }
 

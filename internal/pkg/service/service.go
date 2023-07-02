@@ -37,6 +37,7 @@ type IMVMStore interface {
 	CreateUser(user *model.User) (string, error)
 
 	GetProfile(id string, withPassword bool) (*model.User, error)
+	GetProfiles(ids []string) ([]*model.User, error)
 	GetUserByUsername(username string, withPassword bool) (*model.User, error)
 	SearchForUsers(searchInput string) ([]*model.User, error)
 
@@ -51,6 +52,7 @@ type IMVMStore interface {
 	DeleteRoomInvitation(roomId, recipientId string) error
 
 	GetFriends(userID string) ([]string, error)
+	GetPendingFriends(userID string) ([]string, error)
 	CreateFriendRequest(userID, friendID string) error
 	DeleteFriendRequest(userID, friendID string) error
 	AddFriend(userID, friendID string) error

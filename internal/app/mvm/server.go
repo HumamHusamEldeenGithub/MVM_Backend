@@ -18,6 +18,7 @@ type IMVMService interface {
 
 	GetUserByUsername(username string) (*model.User, error)
 	GetProfile(id string) (*model.User, error)
+	GetProfiles(ids []string) ([]*model.User, error)
 	SearchForUsers(searchInput string) ([]*model.User, error)
 
 	CreateRoom(room *mvmPb.Room) (*mvmPb.Room, error)
@@ -30,6 +31,7 @@ type IMVMService interface {
 	CreateFriendRequest(userID, friendID string) error
 	DeleteFriendRequest(userID, friendID string) error
 	GetFriends(userID string) ([]string, error)
+	GetPendingFriends(userID string) ([]string, error)
 	AddFriend(userID, friendID string) error
 	DeleteFriend(userID, friendID string) error
 
