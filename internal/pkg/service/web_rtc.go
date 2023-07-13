@@ -97,6 +97,7 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 		case "join_room":
 			// Joining room
 			roomId := message.Data.(string)
+			log.Printf("user:%s trying to connecting to room: %s  ", client.ID, roomId)
 
 			if len(roomId) == 0 {
 				handleError(conn, "room id not found", http.StatusNotFound)
@@ -127,6 +128,7 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 			if len(client.RoomID) != 0 {
 				s.LeaveRoom(client.RoomID, userID)
 				deleteUserFromRoom(client.RoomID, userID)
+				client.RoomID = ""
 			}
 
 		case "offer":
@@ -170,13 +172,15 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 			log.Println("Unknown message type:", message.Type)
 		}
 	}
+
+	// push offline status
+	PushOnlineStatusToFriends(client, false)
+
 	// Close connection and remove client from list
 	Clients.mu.Lock()
 	for clientID, client := range Clients.clients {
 		if client.Connection == conn {
 			log.Printf("Unregistered client %s\n", clientID)
-			// push offline event
-			PushOnlineStatusToFriends(client, false)
 			delete(Clients.clients, clientID)
 			break
 		}
@@ -186,6 +190,7 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 	if len(client.RoomID) != 0 {
 		s.LeaveRoom(client.RoomID, userID)
 		deleteUserFromRoom(client.RoomID, userID)
+		client.RoomID = ""
 	}
 
 }
@@ -230,7 +235,6 @@ func deleteUserFromRoom(roomId, userId string) {
 			Rooms[roomId] = Rooms[roomId][:len(Rooms[roomId])-1]
 		}
 	}
-
 }
 
 func PushOnlineStatusToFriends(client *model.SocketClient, isOnline bool) {
