@@ -150,7 +150,7 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 			}
 		case "ice":
 			// Add ICE candidate to client
-			fmt.Println(message.Data)
+			message.FromId = userID
 			data := message.Data.(string)
 			clientID := userID
 			client := Clients.clients[clientID]
