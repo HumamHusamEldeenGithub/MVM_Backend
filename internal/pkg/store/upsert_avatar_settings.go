@@ -7,8 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (repository *MVMRepository) UpsertAvatarSettings(userId string, settings map[int64]int64) error {
-
+func (repository *MVMRepository) UpsertAvatarSettings(userId string, settings map[int32]int32) error {
 	filter := bson.M{"id": userId}
 	update := bson.M{
 		"$set": bson.M{
@@ -17,7 +16,6 @@ func (repository *MVMRepository) UpsertAvatarSettings(userId string, settings ma
 		},
 	}
 
-	// Perform the upsert operation
 	opts := options.Update().SetUpsert(true)
 	_, err := repository.avatarsCollection.UpdateOne(context.Background(), filter, update, opts)
 	if err != nil {

@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (repository *MVMRepository) GetAvatarSettings(userID string) (map[int64]int64, error) {
+func (repository *MVMRepository) GetAvatarSettings(userID string) (map[int32]int32, error) {
 	filter := bson.D{{Key: "id", Value: userID}}
 	var avatarSettings model.AvatarSettings
 	if err := repository.avatarsCollection.FindOne(repository.ctx, filter).Decode(&avatarSettings); err != nil {
