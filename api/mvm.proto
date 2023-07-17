@@ -163,7 +163,7 @@ message Room {
 }
 
 message UpsertAvatarSettingsRequest {
-    map<int64, int64> settings = 1;
+    map<int32, int32> settings = 1;
 }
 
 message UpsertAvatarSettingsResponse{}
@@ -171,7 +171,7 @@ message UpsertAvatarSettingsResponse{}
 message GetAvatarSettingsRequest{}
 
 message GetAvatarSettingsResponse{
-    map<int64, int64> settings = 1;
+    map<int32, int32> settings = 1;
 }
 
 // Socket messages 
@@ -203,7 +203,7 @@ message ErrorMessage {
 message PythonServerMessage{
     int64 index = 1 ; 
     BlendShapes blend_shapes = 2 ; 
-    repeated Keypoint keypoints = 3 ; 
+    Keypoints keypoints = 3 ; 
     float date = 4 ; 
 }
 
@@ -221,4 +221,8 @@ message BlendShape {
   
 message BlendShapes {
     repeated BlendShape blend_shapes = 1 ; 
+}
+
+message Keypoints {
+    repeated Keypoint keypoints = 1 ; 
 }
