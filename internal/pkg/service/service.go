@@ -12,8 +12,6 @@ import (
 
 var Rooms = make(map[string][]*model.SocketClient)
 
-var Broadcaster = make(chan *mvmPb.SocketMessage2)
-
 var Upgrader = websocket.Upgrader{
 
 	CheckOrigin: func(r *http.Request) bool {
@@ -40,6 +38,8 @@ type IMVMStore interface {
 	GetProfiles(ids []string) ([]*model.User, error)
 	GetUserByUsername(username string, withPassword bool) (*model.User, error)
 	SearchForUsers(searchInput string) ([]*model.User, error)
+	UpsertAvatarSettings(id string, settings map[int64]int64) error
+	GetAvatarSettings(id string) (map[int64]int64, error)
 
 	CreateRoom(room *mvmPb.Room) (*mvmPb.Room, error)
 	GetRooms(searchQuery string) ([]*mvmPb.Room, error)

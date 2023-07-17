@@ -1,4 +1,5 @@
 // protoc --go_out=./internal/pkg/generated  api/mvm.proto
+// protoc --csharp_out=../C# mvm.proto
 syntax = "proto3";
 package mvm;
 
@@ -161,6 +162,20 @@ message Room {
     repeated string invitations = 7 ;
 }
 
+message UpsertAvatarSettingsRequest {
+    map<int64, int64> settings = 1;
+}
+
+message UpsertAvatarSettingsResponse{}
+
+message GetAvatarSettingsRequest{}
+
+message GetAvatarSettingsResponse{
+    map<int64, int64> settings = 1;
+}
+
+// Socket messages 
+
 message SocketMessage  {
     SocketMessageType type = 1;
     oneof data {
@@ -185,20 +200,25 @@ message ErrorMessage {
     string error = 2 ;
 }
 
-message SimpleSocketMessage {
-    optional string message = 2 ;   
+message PythonServerMessage{
+    int64 index = 1 ; 
+    BlendShapes blend_shapes = 2 ; 
     repeated Keypoint keypoints = 3 ; 
-}
-
-message SocketMessage2{
-    string room_id = 1 ; 
-    string user_id = 2 ;
-    optional string message = 3 ;   
-    repeated Keypoint keypoints = 4 ; 
+    float date = 4 ; 
 }
 
 message Keypoint {
     float x = 1 ;
     float y = 2 ;
     float z = 3 ;
+}
+
+message BlendShape {
+    int64 index = 1 ; 
+    float score = 2 ; 
+    string category_name = 3 ;
+}
+  
+message BlendShapes {
+    repeated BlendShape blend_shapes = 1 ; 
 }

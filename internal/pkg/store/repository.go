@@ -16,6 +16,7 @@ type MVMRepository struct {
 	usersCollection   *mongo.Collection
 	roomsCollection   *mongo.Collection
 	friendsCollection *mongo.Collection
+	avatarsCollection *mongo.Collection
 }
 
 func NewMVMRepository(ctx context.Context, db, pass string) *MVMRepository {
@@ -26,6 +27,7 @@ func NewMVMRepository(ctx context.Context, db, pass string) *MVMRepository {
 		usersCollection:   dbClient.Database("public").Collection("users"),
 		roomsCollection:   dbClient.Database("public").Collection("rooms"),
 		friendsCollection: dbClient.Database("public").Collection("friends"),
+		avatarsCollection: dbClient.Database("public").Collection("avatars"),
 	}
 }
 
