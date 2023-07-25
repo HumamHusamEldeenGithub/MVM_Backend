@@ -2,5 +2,5 @@ package model
 
 type AvatarSettings struct {
 	ID       string
-	Settings map[int32]int32
+	Settings map[int32]string
 }

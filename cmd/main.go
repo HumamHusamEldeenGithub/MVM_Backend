@@ -62,6 +62,7 @@ func SetupRouter(router *mux.Router, mvmServer *mvm.MVMServiceServer, jwt_manage
 	userGroup.HandleFunc("/search", mvmServer.SearchForUsers).Methods("POST")
 	userGroup.HandleFunc("/avatar", mvmServer.UpsertAvatarSettings).Methods("POST")
 	userGroup.HandleFunc("/avatar", mvmServer.GetAvatarSettings).Methods("Get")
+	userGroup.HandleFunc("/features", mvmServer.GetUserProfileFeatures).Methods("POST")
 
 	roomsGroup := router.PathPrefix("/rooms").Subrouter()
 	roomsGroup.Use(mw.MyMiddleware(jwt_manager))
