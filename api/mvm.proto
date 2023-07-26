@@ -186,14 +186,14 @@ message GetUserProfileFeaturesResponse {
 }
 
 message AvatarSettings{ 
-    int32 head_style = 1;
-    int32 hair_style = 2;
-    int32 eyebrows_style = 3;
-    int32 eye_style = 4;
-    int32 nose_style = 5;
-    int32 mouth_style = 6;
-    int32 skin_imperfection = 7;
-    int32 tattoo = 8;
+    string head_style = 1;
+    string hair_style = 2;
+    string eyebrows_style = 3;
+    string eye_style = 4;
+    string nose_style = 5;
+    string mouth_style = 6;
+    string skin_imperfection = 7;
+    string tattoo = 8;
     string hair_color = 9;
     string brows_color = 10;
     string skin_color = 11;
