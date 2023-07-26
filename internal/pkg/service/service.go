@@ -38,8 +38,8 @@ type IMVMStore interface {
 	GetProfiles(ids []string) ([]*model.User, error)
 	GetUserByUsername(username string, withPassword bool) (*model.User, error)
 	SearchForUsers(searchInput string) ([]*model.User, error)
-	UpsertAvatarSettings(id string, settings map[string]string) error
-	GetAvatarSettings(id string) (map[string]string, error)
+	UpsertAvatarSettings(id string, settings *mvmPb.AvatarSettings) error
+	GetAvatarSettings(id string) (*mvmPb.AvatarSettings, error)
 
 	CreateRoom(room *mvmPb.Room) (*mvmPb.Room, error)
 	GetRooms(searchQuery string) ([]*mvmPb.Room, error)

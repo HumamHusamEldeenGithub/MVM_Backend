@@ -1,6 +1,8 @@
 package model
 
+import "mvm_backend/internal/pkg/generated/mvmPb"
+
 type AvatarSettings struct {
 	ID       string
-	Settings map[string]string
+	Settings *mvmPb.AvatarSettings
 }

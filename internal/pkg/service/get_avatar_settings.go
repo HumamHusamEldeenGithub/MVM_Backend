@@ -1,5 +1,7 @@
 package service
 
-func (s *mvmService) GetAvatarSettings(id string) (map[string]string, error) {
+import "mvm_backend/internal/pkg/generated/mvmPb"
+
+func (s *mvmService) GetAvatarSettings(id string) (*mvmPb.AvatarSettings, error) {
 	return s.store.GetAvatarSettings(id)
 }

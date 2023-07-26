@@ -20,8 +20,8 @@ type IMVMService interface {
 	GetProfile(id string) (*model.User, error)
 	GetProfiles(ids []string) ([]*model.User, error)
 	SearchForUsers(searchInput string) ([]*model.User, error)
-	UpsertAvatarSettings(id string, settings map[string]string) error
-	GetAvatarSettings(id string) (map[string]string, error)
+	UpsertAvatarSettings(id string, settings *mvmPb.AvatarSettings) error
+	GetAvatarSettings(id string) (*mvmPb.AvatarSettings, error)
 
 	CreateRoom(room *mvmPb.Room) (*mvmPb.Room, error)
 	GetRooms(searchQuery string) ([]*mvmPb.Room, error)
@@ -43,5 +43,23 @@ type IMVMService interface {
 func NewIMVMServiceServer(service IMVMService) *MVMServiceServer {
 	return &MVMServiceServer{
 		service: service,
+	}
+}
+
+func encodeAvatarSettings(settings model.AvatarSettings) *mvmPb.AvatarSettings {
+	return &mvmPb.AvatarSettings{
+		HeadStyle:        settings.Settings.HeadStyle,
+		HairStyle:        settings.Settings.HairStyle,
+		EyebrowsStyle:    settings.Settings.EyebrowsStyle,
+		EyeStyle:         settings.Settings.EyeStyle,
+		NoseStyle:        settings.Settings.NoseStyle,
+		MouthStyle:       settings.Settings.MouthStyle,
+		SkinImperfection: settings.Settings.SkinImperfection,
+		Tattoo:           settings.Settings.Tattoo,
+		HairColor:        settings.Settings.HairColor,
+		BrowsColor:       settings.Settings.BrowsColor,
+		SkinColor:        settings.Settings.SkinColor,
+		EyeColor:         settings.Settings.EyeColor,
+		Gender:           settings.Settings.Gender,
 	}
 }

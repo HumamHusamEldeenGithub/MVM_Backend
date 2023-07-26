@@ -148,7 +148,7 @@ message UserProfile {
     string id = 1 ; 
     string username = 2;
     string email = 3;
-    map<string, string> avatar_settings = 4;
+    AvatarSettings avatar_settings = 4;
 }
 
 message GetIceResponse{
@@ -166,7 +166,7 @@ message Room {
 }
 
 message UpsertAvatarSettingsRequest {
-    map<string, string> settings = 1;
+    AvatarSettings settings = 1;
 }
 
 message UpsertAvatarSettingsResponse{}
@@ -174,7 +174,7 @@ message UpsertAvatarSettingsResponse{}
 message GetAvatarSettingsRequest{}
 
 message GetAvatarSettingsResponse{
-    map<string, string> settings = 1;
+    AvatarSettings settings = 1;
 }
 
 message GetUserProfileFeaturesRequest {
@@ -183,6 +183,22 @@ message GetUserProfileFeaturesRequest {
 
 message GetUserProfileFeaturesResponse {
     UserProfile profile = 1;
+}
+
+message AvatarSettings{ 
+    int32 head_style = 1;
+    int32 hair_style = 2;
+    int32 eyebrows_style = 3;
+    int32 eye_style = 4;
+    int32 nose_style = 5;
+    int32 mouth_style = 6;
+    int32 skin_imperfection = 7;
+    int32 tattoo = 8;
+    string hair_color = 9;
+    string brows_color = 10;
+    string skin_color = 11;
+    string eye_color = 12;
+    string gender = 13;
 }
 
 // Socket messages 
