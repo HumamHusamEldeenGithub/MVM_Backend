@@ -13,8 +13,9 @@ message LoginUserRequest{
 }
 
 message LoginUserResponse{
-    string token = 1;
-    string refresh_token = 2;
+    string id = 1;
+    string token = 2;
+    string refresh_token = 3;
 }
 
 message LoginByRefreshTokenRequest {
@@ -22,8 +23,9 @@ message LoginByRefreshTokenRequest {
 }
 
 message LoginByRefreshTokenResponse {
-    string token = 1;
-    string refresh_token = 2;
+    string id = 1;
+    string token = 2;
+    string refresh_token = 3;
 }
 
 message CreateUserRequest {

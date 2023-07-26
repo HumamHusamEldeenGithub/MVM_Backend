@@ -14,7 +14,7 @@ func (s *MVMServiceServer) LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := s.service.LoginUser(input.Username, input.Password)
+	userId, res, err := s.service.LoginUser(input.Username, input.Password)
 	if err != nil {
 		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -22,6 +22,7 @@ func (s *MVMServiceServer) LoginUser(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(mvmPb.LoginUserResponse{
+		Id:           userId,
 		Token:        res.Token,
 		RefreshToken: res.RefreshToken,
 	})

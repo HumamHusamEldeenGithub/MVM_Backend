@@ -6,18 +6,18 @@ import (
 	"mvm_backend/internal/pkg/utils"
 )
 
-func (s *mvmService) LoginUser(username, password string) (*jwt_manager.JWTToken, error) {
+func (s *mvmService) LoginUser(username, password string) (string, *jwt_manager.JWTToken, error) {
 	user, err := s.store.GetUserByUsername(username, true)
 	if err != nil {
-		return nil, err
+		return "", nil, err
 	}
 
 	if !utils.ComparePasswords(user.Password, password) {
-		return nil, errors.ErrorsList[errors.InvalidPasswordError]
+		return "", nil, errors.ErrorsList[errors.InvalidPasswordError]
 	}
 	tokens, err := s.auth.GenerateToken(user, true)
 	if err != nil {
-		return nil, err
+		return "", nil, err
 	}
-	return tokens, nil
+	return user.ID, tokens, nil
 }

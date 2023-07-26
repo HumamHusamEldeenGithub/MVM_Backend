@@ -12,7 +12,7 @@ type MVMServiceServer struct {
 }
 
 type IMVMService interface {
-	LoginUser(username, password string) (*jwt_manager.JWTToken, error)
+	LoginUser(username, password string) (string, *jwt_manager.JWTToken, error)
 	LoginByRefreshToken(refreshToken string) (*jwt_manager.JWTToken, error)
 	CreateUser(user *model.User) (string, error)
 
