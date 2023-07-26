@@ -20,8 +20,8 @@ type IMVMService interface {
 	GetProfile(id string) (*model.User, error)
 	GetProfiles(ids []string) ([]*model.User, error)
 	SearchForUsers(searchInput string) ([]*model.User, error)
-	UpsertAvatarSettings(id string, settings map[int32]string) error
-	GetAvatarSettings(id string) (map[int32]string, error)
+	UpsertAvatarSettings(id string, settings map[string]string) error
+	GetAvatarSettings(id string) (map[string]string, error)
 
 	CreateRoom(room *mvmPb.Room) (*mvmPb.Room, error)
 	GetRooms(searchQuery string) ([]*mvmPb.Room, error)

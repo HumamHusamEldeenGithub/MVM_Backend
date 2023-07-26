@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (repository *MVMRepository) UpsertAvatarSettings(userId string, settings map[int32]string) error {
+func (repository *MVMRepository) UpsertAvatarSettings(userId string, settings map[string]string) error {
 	filter := bson.M{"id": userId}
 	update := bson.M{
 		"$set": bson.M{
