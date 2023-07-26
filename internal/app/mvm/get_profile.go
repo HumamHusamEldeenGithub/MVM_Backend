@@ -36,17 +36,17 @@ func (s *MVMServiceServer) GetProfile(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(mvmPb.GetProfileResponse{
-		Profile:   encodeUserProfile(profile),
-		UserRooms: rooms,
+		Profile:        encodeUserProfile(profile),
+		UserRooms:      rooms,
+		AvatarSettings: profile.AvatarSettings,
 	})
 }
 
 func encodeUserProfile(profile *model.User) *mvmPb.UserProfile {
 	return &mvmPb.UserProfile{
-		Id:             profile.ID,
-		Username:       profile.Username,
-		Email:          profile.Email,
-		AvatarSettings: profile.AvatarSettings,
+		Id:       profile.ID,
+		Username: profile.Username,
+		Email:    profile.Email,
 	}
 
 }

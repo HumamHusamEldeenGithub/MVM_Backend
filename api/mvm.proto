@@ -43,6 +43,7 @@ message GetProfileRequest {}
 message GetProfileResponse {
     UserProfile profile = 1;
     repeated Room user_rooms = 2;
+    AvatarSettings avatarSettings = 3 ; 
 }
 
 message GetUserByUsernameRequest {
@@ -148,7 +149,6 @@ message UserProfile {
     string id = 1 ; 
     string username = 2;
     string email = 3;
-    AvatarSettings avatar_settings = 4;
 }
 
 message GetIceResponse{
@@ -183,21 +183,22 @@ message GetUserProfileFeaturesRequest {
 
 message GetUserProfileFeaturesResponse {
     UserProfile profile = 1;
+    AvatarSettings avatarSettings = 2 ; 
 }
 
 message AvatarSettings{ 
-    string head_style = 1;
-    string hair_style = 2;
-    string eyebrows_style = 3;
-    string eye_style = 4;
-    string nose_style = 5;
-    string mouth_style = 6;
-    string skin_imperfection = 7;
+    string headStyle = 1;
+    string hairStyle = 2;
+    string eyebrowsStyle = 3;
+    string eyeStyle = 4;
+    string noseStyle = 5;
+    string mouthStyle = 6;
+    string skinImperfection = 7;
     string tattoo = 8;
-    string hair_color = 9;
-    string brows_color = 10;
-    string skin_color = 11;
-    string eye_color = 12;
+    string hairColor = 9;
+    string browsColor = 10;
+    string skinColor = 11;
+    string eyeColor = 12;
     string gender = 13;
 }
 
