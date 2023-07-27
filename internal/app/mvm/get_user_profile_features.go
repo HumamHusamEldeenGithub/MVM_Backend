@@ -28,6 +28,7 @@ func (s *MVMServiceServer) GetUserProfileFeatures(w http.ResponseWriter, r *http
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(mvmPb.GetUserProfileFeaturesResponse{
-		Profile: encodeUserProfile(profile),
+		Profile:        encodeUserProfile(profile),
+		AvatarSettings: profile.AvatarSettings,
 	})
 }
