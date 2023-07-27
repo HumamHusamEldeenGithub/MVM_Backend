@@ -228,6 +228,11 @@ message ErrorMessage {
     string error = 2 ;
 }
 
+enum DataChannelMessageType {
+    CHAT_MESSAGE = 0 ;
+    TRACKING_MESSAGE = 1 ; 
+}
+
 message PythonServerMessage{
     int64 index = 1 ; 
     BlendShapes blend_shapes = 2 ; 

@@ -72,6 +72,52 @@ func (SocketMessageType) EnumDescriptor() ([]byte, []int) {
 	return file_api_mvm_proto_rawDescGZIP(), []int{0}
 }
 
+type DataChannelMessageType int32
+
+const (
+	DataChannelMessageType_CHAT_MESSAGE     DataChannelMessageType = 0
+	DataChannelMessageType_TRACKING_MESSAGE DataChannelMessageType = 1
+)
+
+// Enum value maps for DataChannelMessageType.
+var (
+	DataChannelMessageType_name = map[int32]string{
+		0: "CHAT_MESSAGE",
+		1: "TRACKING_MESSAGE",
+	}
+	DataChannelMessageType_value = map[string]int32{
+		"CHAT_MESSAGE":     0,
+		"TRACKING_MESSAGE": 1,
+	}
+)
+
+func (x DataChannelMessageType) Enum() *DataChannelMessageType {
+	p := new(DataChannelMessageType)
+	*p = x
+	return p
+}
+
+func (x DataChannelMessageType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (DataChannelMessageType) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_mvm_proto_enumTypes[1].Descriptor()
+}
+
+func (DataChannelMessageType) Type() protoreflect.EnumType {
+	return &file_api_mvm_proto_enumTypes[1]
+}
+
+func (x DataChannelMessageType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use DataChannelMessageType.Descriptor instead.
+func (DataChannelMessageType) EnumDescriptor() ([]byte, []int) {
+	return file_api_mvm_proto_rawDescGZIP(), []int{1}
+}
+
 type Empty struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -3198,8 +3244,12 @@ var file_api_mvm_proto_rawDesc = []byte{
 	0x54, 0x79, 0x70, 0x65, 0x12, 0x10, 0x0a, 0x0c, 0x52, 0x4f, 0x4f, 0x4d, 0x5f, 0x4d, 0x45, 0x53,
 	0x53, 0x41, 0x47, 0x45, 0x10, 0x00, 0x12, 0x0f, 0x0a, 0x0b, 0x55, 0x53, 0x45, 0x52, 0x5f, 0x4a,
 	0x4f, 0x49, 0x4e, 0x45, 0x44, 0x10, 0x01, 0x12, 0x09, 0x0a, 0x05, 0x45, 0x52, 0x52, 0x4f, 0x52,
-	0x10, 0x02, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x2f, 0x6d, 0x76, 0x6d, 0x50, 0x62, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x10, 0x02, 0x2a, 0x40, 0x0a, 0x16, 0x44, 0x61, 0x74, 0x61, 0x43, 0x68, 0x61, 0x6e, 0x6e, 0x65,
+	0x6c, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x54, 0x79, 0x70, 0x65, 0x12, 0x10, 0x0a, 0x0c,
+	0x43, 0x48, 0x41, 0x54, 0x5f, 0x4d, 0x45, 0x53, 0x53, 0x41, 0x47, 0x45, 0x10, 0x00, 0x12, 0x14,
+	0x0a, 0x10, 0x54, 0x52, 0x41, 0x43, 0x4b, 0x49, 0x4e, 0x47, 0x5f, 0x4d, 0x45, 0x53, 0x53, 0x41,
+	0x47, 0x45, 0x10, 0x01, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x2f, 0x6d, 0x76, 0x6d, 0x50, 0x62, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -3214,90 +3264,91 @@ func file_api_mvm_proto_rawDescGZIP() []byte {
 	return file_api_mvm_proto_rawDescData
 }
 
-var file_api_mvm_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_api_mvm_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_api_mvm_proto_msgTypes = make([]protoimpl.MessageInfo, 55)
 var file_api_mvm_proto_goTypes = []interface{}{
 	(SocketMessageType)(0),                 // 0: mvm.SocketMessageType
-	(*Empty)(nil),                          // 1: mvm.Empty
-	(*LoginUserRequest)(nil),               // 2: mvm.LoginUserRequest
-	(*LoginUserResponse)(nil),              // 3: mvm.LoginUserResponse
-	(*LoginByRefreshTokenRequest)(nil),     // 4: mvm.LoginByRefreshTokenRequest
-	(*LoginByRefreshTokenResponse)(nil),    // 5: mvm.LoginByRefreshTokenResponse
-	(*CreateUserRequest)(nil),              // 6: mvm.CreateUserRequest
-	(*CreateUserResponse)(nil),             // 7: mvm.CreateUserResponse
-	(*GetProfileRequest)(nil),              // 8: mvm.GetProfileRequest
-	(*GetProfileResponse)(nil),             // 9: mvm.GetProfileResponse
-	(*GetUserByUsernameRequest)(nil),       // 10: mvm.GetUserByUsernameRequest
-	(*GetUserByUsernameResponse)(nil),      // 11: mvm.GetUserByUsernameResponse
-	(*CreateFriendRequestRequest)(nil),     // 12: mvm.CreateFriendRequestRequest
-	(*CreateFriendRequestResponse)(nil),    // 13: mvm.CreateFriendRequestResponse
-	(*DeleteFriendRequestRequest)(nil),     // 14: mvm.DeleteFriendRequestRequest
-	(*DeleteFriendRequestResponse)(nil),    // 15: mvm.DeleteFriendRequestResponse
-	(*AddFriendRequest)(nil),               // 16: mvm.AddFriendRequest
-	(*AddFriendResponse)(nil),              // 17: mvm.AddFriendResponse
-	(*DeleteFriendRequest)(nil),            // 18: mvm.DeleteFriendRequest
-	(*DeleteFriendResponse)(nil),           // 19: mvm.DeleteFriendResponse
-	(*GetFriendsRequest)(nil),              // 20: mvm.GetFriendsRequest
-	(*GetFriendsResponse)(nil),             // 21: mvm.GetFriendsResponse
-	(*GetPendingFriendsRequest)(nil),       // 22: mvm.GetPendingFriendsRequest
-	(*GetPendingFriendsResponse)(nil),      // 23: mvm.GetPendingFriendsResponse
-	(*SearchForUsersRequest)(nil),          // 24: mvm.SearchForUsersRequest
-	(*SearchForUsersResponse)(nil),         // 25: mvm.SearchForUsersResponse
-	(*CreateRoomRequest)(nil),              // 26: mvm.CreateRoomRequest
-	(*CreateRoomResponse)(nil),             // 27: mvm.CreateRoomResponse
-	(*GetRoomRequest)(nil),                 // 28: mvm.GetRoomRequest
-	(*GetRoomsResponse)(nil),               // 29: mvm.GetRoomsResponse
-	(*GetUserRoomsRequest)(nil),            // 30: mvm.GetUserRoomsRequest
-	(*GetUserRoomsResponse)(nil),           // 31: mvm.GetUserRoomsResponse
-	(*DeleteRoomRequest)(nil),              // 32: mvm.DeleteRoomRequest
-	(*DeleteRoomResponse)(nil),             // 33: mvm.DeleteRoomResponse
-	(*CreateRoomInvitationRequest)(nil),    // 34: mvm.CreateRoomInvitationRequest
-	(*CreateRoomInvitationResponse)(nil),   // 35: mvm.CreateRoomInvitationResponse
-	(*DeleteRoomInvitationRequest)(nil),    // 36: mvm.DeleteRoomInvitationRequest
-	(*DeleteRoomInvitationResponse)(nil),   // 37: mvm.DeleteRoomInvitationResponse
-	(*UserProfile)(nil),                    // 38: mvm.UserProfile
-	(*GetIceResponse)(nil),                 // 39: mvm.GetIceResponse
-	(*Room)(nil),                           // 40: mvm.Room
-	(*UpsertAvatarSettingsRequest)(nil),    // 41: mvm.UpsertAvatarSettingsRequest
-	(*UpsertAvatarSettingsResponse)(nil),   // 42: mvm.UpsertAvatarSettingsResponse
-	(*GetAvatarSettingsRequest)(nil),       // 43: mvm.GetAvatarSettingsRequest
-	(*GetAvatarSettingsResponse)(nil),      // 44: mvm.GetAvatarSettingsResponse
-	(*GetUserProfileFeaturesRequest)(nil),  // 45: mvm.GetUserProfileFeaturesRequest
-	(*GetUserProfileFeaturesResponse)(nil), // 46: mvm.GetUserProfileFeaturesResponse
-	(*AvatarSettings)(nil),                 // 47: mvm.AvatarSettings
-	(*SocketMessage)(nil),                  // 48: mvm.SocketMessage
-	(*RoomMessage)(nil),                    // 49: mvm.RoomMessage
-	(*ErrorMessage)(nil),                   // 50: mvm.ErrorMessage
-	(*PythonServerMessage)(nil),            // 51: mvm.PythonServerMessage
-	(*Keypoint)(nil),                       // 52: mvm.Keypoint
-	(*BlendShape)(nil),                     // 53: mvm.BlendShape
-	(*BlendShapes)(nil),                    // 54: mvm.BlendShapes
-	(*Keypoints)(nil),                      // 55: mvm.Keypoints
+	(DataChannelMessageType)(0),            // 1: mvm.DataChannelMessageType
+	(*Empty)(nil),                          // 2: mvm.Empty
+	(*LoginUserRequest)(nil),               // 3: mvm.LoginUserRequest
+	(*LoginUserResponse)(nil),              // 4: mvm.LoginUserResponse
+	(*LoginByRefreshTokenRequest)(nil),     // 5: mvm.LoginByRefreshTokenRequest
+	(*LoginByRefreshTokenResponse)(nil),    // 6: mvm.LoginByRefreshTokenResponse
+	(*CreateUserRequest)(nil),              // 7: mvm.CreateUserRequest
+	(*CreateUserResponse)(nil),             // 8: mvm.CreateUserResponse
+	(*GetProfileRequest)(nil),              // 9: mvm.GetProfileRequest
+	(*GetProfileResponse)(nil),             // 10: mvm.GetProfileResponse
+	(*GetUserByUsernameRequest)(nil),       // 11: mvm.GetUserByUsernameRequest
+	(*GetUserByUsernameResponse)(nil),      // 12: mvm.GetUserByUsernameResponse
+	(*CreateFriendRequestRequest)(nil),     // 13: mvm.CreateFriendRequestRequest
+	(*CreateFriendRequestResponse)(nil),    // 14: mvm.CreateFriendRequestResponse
+	(*DeleteFriendRequestRequest)(nil),     // 15: mvm.DeleteFriendRequestRequest
+	(*DeleteFriendRequestResponse)(nil),    // 16: mvm.DeleteFriendRequestResponse
+	(*AddFriendRequest)(nil),               // 17: mvm.AddFriendRequest
+	(*AddFriendResponse)(nil),              // 18: mvm.AddFriendResponse
+	(*DeleteFriendRequest)(nil),            // 19: mvm.DeleteFriendRequest
+	(*DeleteFriendResponse)(nil),           // 20: mvm.DeleteFriendResponse
+	(*GetFriendsRequest)(nil),              // 21: mvm.GetFriendsRequest
+	(*GetFriendsResponse)(nil),             // 22: mvm.GetFriendsResponse
+	(*GetPendingFriendsRequest)(nil),       // 23: mvm.GetPendingFriendsRequest
+	(*GetPendingFriendsResponse)(nil),      // 24: mvm.GetPendingFriendsResponse
+	(*SearchForUsersRequest)(nil),          // 25: mvm.SearchForUsersRequest
+	(*SearchForUsersResponse)(nil),         // 26: mvm.SearchForUsersResponse
+	(*CreateRoomRequest)(nil),              // 27: mvm.CreateRoomRequest
+	(*CreateRoomResponse)(nil),             // 28: mvm.CreateRoomResponse
+	(*GetRoomRequest)(nil),                 // 29: mvm.GetRoomRequest
+	(*GetRoomsResponse)(nil),               // 30: mvm.GetRoomsResponse
+	(*GetUserRoomsRequest)(nil),            // 31: mvm.GetUserRoomsRequest
+	(*GetUserRoomsResponse)(nil),           // 32: mvm.GetUserRoomsResponse
+	(*DeleteRoomRequest)(nil),              // 33: mvm.DeleteRoomRequest
+	(*DeleteRoomResponse)(nil),             // 34: mvm.DeleteRoomResponse
+	(*CreateRoomInvitationRequest)(nil),    // 35: mvm.CreateRoomInvitationRequest
+	(*CreateRoomInvitationResponse)(nil),   // 36: mvm.CreateRoomInvitationResponse
+	(*DeleteRoomInvitationRequest)(nil),    // 37: mvm.DeleteRoomInvitationRequest
+	(*DeleteRoomInvitationResponse)(nil),   // 38: mvm.DeleteRoomInvitationResponse
+	(*UserProfile)(nil),                    // 39: mvm.UserProfile
+	(*GetIceResponse)(nil),                 // 40: mvm.GetIceResponse
+	(*Room)(nil),                           // 41: mvm.Room
+	(*UpsertAvatarSettingsRequest)(nil),    // 42: mvm.UpsertAvatarSettingsRequest
+	(*UpsertAvatarSettingsResponse)(nil),   // 43: mvm.UpsertAvatarSettingsResponse
+	(*GetAvatarSettingsRequest)(nil),       // 44: mvm.GetAvatarSettingsRequest
+	(*GetAvatarSettingsResponse)(nil),      // 45: mvm.GetAvatarSettingsResponse
+	(*GetUserProfileFeaturesRequest)(nil),  // 46: mvm.GetUserProfileFeaturesRequest
+	(*GetUserProfileFeaturesResponse)(nil), // 47: mvm.GetUserProfileFeaturesResponse
+	(*AvatarSettings)(nil),                 // 48: mvm.AvatarSettings
+	(*SocketMessage)(nil),                  // 49: mvm.SocketMessage
+	(*RoomMessage)(nil),                    // 50: mvm.RoomMessage
+	(*ErrorMessage)(nil),                   // 51: mvm.ErrorMessage
+	(*PythonServerMessage)(nil),            // 52: mvm.PythonServerMessage
+	(*Keypoint)(nil),                       // 53: mvm.Keypoint
+	(*BlendShape)(nil),                     // 54: mvm.BlendShape
+	(*BlendShapes)(nil),                    // 55: mvm.BlendShapes
+	(*Keypoints)(nil),                      // 56: mvm.Keypoints
 }
 var file_api_mvm_proto_depIdxs = []int32{
-	38, // 0: mvm.GetProfileResponse.profile:type_name -> mvm.UserProfile
-	40, // 1: mvm.GetProfileResponse.user_rooms:type_name -> mvm.Room
-	47, // 2: mvm.GetProfileResponse.avatarSettings:type_name -> mvm.AvatarSettings
-	38, // 3: mvm.GetUserByUsernameResponse.profile:type_name -> mvm.UserProfile
-	40, // 4: mvm.GetUserByUsernameResponse.user_rooms:type_name -> mvm.Room
-	38, // 5: mvm.GetFriendsResponse.profiles:type_name -> mvm.UserProfile
-	38, // 6: mvm.GetPendingFriendsResponse.profiles:type_name -> mvm.UserProfile
-	38, // 7: mvm.SearchForUsersResponse.users:type_name -> mvm.UserProfile
-	40, // 8: mvm.CreateRoomResponse.room:type_name -> mvm.Room
-	40, // 9: mvm.GetRoomsResponse.rooms:type_name -> mvm.Room
-	40, // 10: mvm.GetUserRoomsResponse.rooms:type_name -> mvm.Room
-	47, // 11: mvm.UpsertAvatarSettingsRequest.settings:type_name -> mvm.AvatarSettings
-	47, // 12: mvm.GetAvatarSettingsResponse.settings:type_name -> mvm.AvatarSettings
-	38, // 13: mvm.GetUserProfileFeaturesResponse.profile:type_name -> mvm.UserProfile
-	47, // 14: mvm.GetUserProfileFeaturesResponse.avatarSettings:type_name -> mvm.AvatarSettings
+	39, // 0: mvm.GetProfileResponse.profile:type_name -> mvm.UserProfile
+	41, // 1: mvm.GetProfileResponse.user_rooms:type_name -> mvm.Room
+	48, // 2: mvm.GetProfileResponse.avatarSettings:type_name -> mvm.AvatarSettings
+	39, // 3: mvm.GetUserByUsernameResponse.profile:type_name -> mvm.UserProfile
+	41, // 4: mvm.GetUserByUsernameResponse.user_rooms:type_name -> mvm.Room
+	39, // 5: mvm.GetFriendsResponse.profiles:type_name -> mvm.UserProfile
+	39, // 6: mvm.GetPendingFriendsResponse.profiles:type_name -> mvm.UserProfile
+	39, // 7: mvm.SearchForUsersResponse.users:type_name -> mvm.UserProfile
+	41, // 8: mvm.CreateRoomResponse.room:type_name -> mvm.Room
+	41, // 9: mvm.GetRoomsResponse.rooms:type_name -> mvm.Room
+	41, // 10: mvm.GetUserRoomsResponse.rooms:type_name -> mvm.Room
+	48, // 11: mvm.UpsertAvatarSettingsRequest.settings:type_name -> mvm.AvatarSettings
+	48, // 12: mvm.GetAvatarSettingsResponse.settings:type_name -> mvm.AvatarSettings
+	39, // 13: mvm.GetUserProfileFeaturesResponse.profile:type_name -> mvm.UserProfile
+	48, // 14: mvm.GetUserProfileFeaturesResponse.avatarSettings:type_name -> mvm.AvatarSettings
 	0,  // 15: mvm.SocketMessage.type:type_name -> mvm.SocketMessageType
-	49, // 16: mvm.SocketMessage.room_message:type_name -> mvm.RoomMessage
-	50, // 17: mvm.SocketMessage.error_message:type_name -> mvm.ErrorMessage
-	52, // 18: mvm.RoomMessage.keypoints:type_name -> mvm.Keypoint
-	54, // 19: mvm.PythonServerMessage.blend_shapes:type_name -> mvm.BlendShapes
-	55, // 20: mvm.PythonServerMessage.keypoints:type_name -> mvm.Keypoints
-	53, // 21: mvm.BlendShapes.blend_shapes:type_name -> mvm.BlendShape
-	52, // 22: mvm.Keypoints.keypoints:type_name -> mvm.Keypoint
+	50, // 16: mvm.SocketMessage.room_message:type_name -> mvm.RoomMessage
+	51, // 17: mvm.SocketMessage.error_message:type_name -> mvm.ErrorMessage
+	53, // 18: mvm.RoomMessage.keypoints:type_name -> mvm.Keypoint
+	55, // 19: mvm.PythonServerMessage.blend_shapes:type_name -> mvm.BlendShapes
+	56, // 20: mvm.PythonServerMessage.keypoints:type_name -> mvm.Keypoints
+	54, // 21: mvm.BlendShapes.blend_shapes:type_name -> mvm.BlendShape
+	53, // 22: mvm.Keypoints.keypoints:type_name -> mvm.Keypoint
 	23, // [23:23] is the sub-list for method output_type
 	23, // [23:23] is the sub-list for method input_type
 	23, // [23:23] is the sub-list for extension type_name
@@ -3982,7 +4033,7 @@ func file_api_mvm_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_mvm_proto_rawDesc,
-			NumEnums:      1,
+			NumEnums:      2,
 			NumMessages:   55,
 			NumExtensions: 0,
 			NumServices:   0,
