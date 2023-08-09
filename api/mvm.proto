@@ -32,11 +32,14 @@ message LoginByRefreshTokenResponse {
 message CreateUserRequest {
     string username = 1 ; 
     string email = 2 ; 
-    string password = 3 ;
+    string phonenumber = 3;
+    string password = 4 ;
 }
 
 message CreateUserResponse {
     string id = 1 ;
+    string token = 2;
+    string refresh_token = 3;
 }
 
 message GetProfileRequest {}
@@ -201,7 +204,7 @@ message AvatarSettings{
     string skinColor = 11;
     string eyeColor = 12;
     string gender = 13;
-    string roomBackground = 14;
+    string roomBackgroundColor = 14;
 }
 
 // Socket messages 

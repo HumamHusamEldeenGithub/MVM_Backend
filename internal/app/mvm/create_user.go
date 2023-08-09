@@ -15,7 +15,7 @@ func (s *MVMServiceServer) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := s.service.CreateUser(&model.User{
+	userID, tokens, err := s.service.CreateUser(&model.User{
 		Username: input.Username,
 		Email:    input.Email,
 		Password: input.Password,
@@ -26,6 +26,8 @@ func (s *MVMServiceServer) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(mvmPb.CreateUserResponse{
-		Id: userID,
+		Id:           userID,
+		Token:        tokens.Token,
+		RefreshToken: tokens.RefreshToken,
 	})
 }
