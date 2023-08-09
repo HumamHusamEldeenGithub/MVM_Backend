@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/websocket"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 type Message struct {
@@ -246,14 +247,15 @@ func PushOnlineStatusToFriends(client *model.SocketClient, isOnline bool) {
 	Clients.mu.Lock()
 	for _, peer := range Clients.clients {
 		if friendMap[peer.ID] {
+			jsonString := protojson.Format(&mvmPb.OnlineStatus{
+				Id:       client.ID,
+				IsOnline: isOnline,
+			})
 			message := &Message{
 				Type:   "user_status_changed",
 				ToId:   peer.ID,
 				FromId: client.ID,
-				Data: &OnlineStatus{
-					ID:       client.ID,
-					IsOnline: isOnline,
-				},
+				Data:   jsonString,
 			}
 			forwardMessage(peer.ID, message)
 		}
@@ -276,23 +278,29 @@ func (s *mvmService) GetOnlineFriendStatus(userID string) {
 		friendMap[friend] = true
 	}
 
-	onlineStatusList := make([]*OnlineStatus, 0)
+	onlineStatusList := &mvmPb.OnlineStatuses{}
 
 	Clients.mu.Lock()
 	for _, peer := range Clients.clients {
 		if friendMap[peer.ID] {
-			onlineStatusList = append(onlineStatusList, &OnlineStatus{
-				ID:       peer.ID,
+			onlineStatusList.Users = append(onlineStatusList.Users, &mvmPb.OnlineStatus{
+				Id:       peer.ID,
 				IsOnline: true,
 			})
 		}
 	}
+	onlineStatusList.Users = append(onlineStatusList.Users, &mvmPb.OnlineStatus{
+		Id:       "112233",
+		IsOnline: true,
+	})
 	Clients.mu.Unlock()
+
+	jsonString := protojson.Format(onlineStatusList)
 
 	message := &Message{
 		Type: "get_users_online_status_list",
 		ToId: userID,
-		Data: onlineStatusList,
+		Data: jsonString,
 	}
 	forwardMessage(userID, message)
 
