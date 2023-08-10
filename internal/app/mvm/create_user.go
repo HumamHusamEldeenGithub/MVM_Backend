@@ -16,9 +16,10 @@ func (s *MVMServiceServer) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID, tokens, err := s.service.CreateUser(&model.User{
-		Username: input.Username,
-		Email:    input.Email,
-		Password: input.Password,
+		Username:    input.Username,
+		Email:       input.Email,
+		Password:    input.Password,
+		Phonenumber: input.Phonenumber,
 	})
 	if err != nil {
 		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)

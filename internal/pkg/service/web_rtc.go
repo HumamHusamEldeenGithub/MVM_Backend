@@ -303,8 +303,8 @@ func (s *mvmService) GetOnlineFriendStatus(userID string) {
 		}
 	}
 	onlineStatusList.Users = append(onlineStatusList.Users, &mvmPb.OnlineStatus{
-		Id:       "112233",
-		Username: "testingUser",
+		Id:       "f9af940d-a984-4fd2-98af-ce2e179679c3",
+		Username: "amer",
 		IsOnline: true,
 	})
 	Clients.mu.Unlock()
