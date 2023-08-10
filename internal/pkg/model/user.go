@@ -7,6 +7,7 @@ type User struct {
 	Username       string                `json:"username" bson:"username"`
 	Email          string                `json:"email" bson:"email"`
 	Password       string                `json:"password" bson:"password"`
+	Phonenumber    string                `json:"phonenumber" bson:"phonenumber"`
 	Friends        []string              `json:"friends" bson:"friends"`
 	AvatarSettings *mvmPb.AvatarSettings `json:"avatar_settings" bson:"avatar_settings"`
 }

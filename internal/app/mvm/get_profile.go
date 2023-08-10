@@ -44,9 +44,10 @@ func (s *MVMServiceServer) GetProfile(w http.ResponseWriter, r *http.Request) {
 
 func encodeUserProfile(profile *model.User) *mvmPb.UserProfile {
 	return &mvmPb.UserProfile{
-		Id:       profile.ID,
-		Username: profile.Username,
-		Email:    profile.Email,
+		Id:          profile.ID,
+		Username:    profile.Username,
+		Email:       profile.Email,
+		Phonenumber: profile.Phonenumber,
 	}
 
 }
