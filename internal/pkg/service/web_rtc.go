@@ -70,6 +70,13 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 	log.Printf("Registered client %s\n", client.ID)
 	Clients.mu.Unlock()
 
+	profile, err := s.GetProfile(client.ID)
+	if err != nil {
+		handleError(conn, "user profile not found", http.StatusNotFound)
+		return
+	}
+	Clients.clients[client.ID].Profile = profile
+
 	// get online friends
 	s.GetOnlineFriendStatus(userID)
 
@@ -249,6 +256,7 @@ func PushOnlineStatusToFriends(client *model.SocketClient, isOnline bool) {
 		if friendMap[peer.ID] {
 			jsonString := protojson.Format(&mvmPb.OnlineStatus{
 				Id:       client.ID,
+				Username: client.Profile.Username,
 				IsOnline: isOnline,
 			})
 			message := &Message{
@@ -283,14 +291,20 @@ func (s *mvmService) GetOnlineFriendStatus(userID string) {
 	Clients.mu.Lock()
 	for _, peer := range Clients.clients {
 		if friendMap[peer.ID] {
+			profile, err := s.GetProfile(peer.ID)
+			if err != nil {
+				continue
+			}
 			onlineStatusList.Users = append(onlineStatusList.Users, &mvmPb.OnlineStatus{
 				Id:       peer.ID,
+				Username: profile.Username,
 				IsOnline: true,
 			})
 		}
 	}
 	onlineStatusList.Users = append(onlineStatusList.Users, &mvmPb.OnlineStatus{
 		Id:       "112233",
+		Username: "testingUser",
 		IsOnline: true,
 	})
 	Clients.mu.Unlock()
