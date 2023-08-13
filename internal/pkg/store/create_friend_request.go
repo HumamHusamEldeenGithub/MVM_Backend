@@ -12,5 +12,12 @@ func (repository *MVMRepository) CreateFriendRequest(userID, friendID string) er
 	if err != nil {
 		return err
 	}
+
+	filter = bson.M{"id": userID}
+	update = bson.M{"$addToSet": bson.M{"sent": friendID}}
+	_, err = repository.friendsCollection.UpdateOne(repository.ctx, filter, update, options.Update().SetUpsert(true))
+	if err != nil {
+		return err
+	}
 	return nil
 }

@@ -7,19 +7,13 @@ import (
 	"net/http"
 )
 
-func (s *MVMServiceServer) DeleteNotification(w http.ResponseWriter, r *http.Request) {
+func (s *MVMServiceServer) DeleteNotifications(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value("user_id").(string)
 	if !ok {
 		errors.NewHTTPError(w, errors.NewError("User ID not found", http.StatusNotFound), http.StatusNotFound)
 		return
 	}
-	var input mvmPb.DeleteNotificationRequest
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
-		return
-	}
-
-	if err := s.service.DeleteNotification(userID, input.Id); err != nil {
+	if err := s.service.DeleteNotifications(userID); err != nil {
 		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}

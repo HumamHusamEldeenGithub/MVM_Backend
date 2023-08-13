@@ -62,7 +62,7 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 	client := &model.SocketClient{
 		ID:         userID,
 		Connection: conn,
-		Friends:    friends,
+		Friends:    friends.Friends,
 	}
 
 	Clients.mu.Lock()
@@ -278,11 +278,11 @@ func (s *mvmService) GetOnlineFriendStatus(userID string) {
 	}
 
 	Clients.mu.Lock()
-	Clients.clients[userID].Friends = friends
+	Clients.clients[userID].Friends = friends.Friends
 	Clients.mu.Unlock()
 
 	friendMap := make(map[string]bool)
-	for _, friend := range friends {
+	for _, friend := range friends.Friends {
 		friendMap[friend] = true
 	}
 

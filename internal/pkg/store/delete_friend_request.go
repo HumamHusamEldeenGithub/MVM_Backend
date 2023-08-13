@@ -11,5 +11,12 @@ func (repository *MVMRepository) DeleteFriendRequest(userID, friendID string) er
 	if err != nil {
 		return err
 	}
+
+	filter = bson.M{"id": userID}
+	update = bson.M{"$pull": bson.M{"sent": friendID}}
+	_, err = repository.friendsCollection.UpdateOne(repository.ctx, filter, update)
+	if err != nil {
+		return err
+	}
 	return nil
 }

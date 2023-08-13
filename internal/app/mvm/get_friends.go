@@ -15,15 +15,15 @@ func (s *MVMServiceServer) GetFriends(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	usersIds, err := s.service.GetFriends(userID)
+	friends, err := s.service.GetFriends(userID)
 	if err != nil {
 		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
 	var users []*model.User
-	if len(usersIds) != 0 {
-		users, err = s.service.GetProfiles(usersIds)
+	if len(friends.Friends) != 0 {
+		users, err = s.service.GetProfiles(friends.Friends)
 		if err != nil {
 			errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 			return
@@ -31,7 +31,11 @@ func (s *MVMServiceServer) GetFriends(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(mvmPb.GetFriendsResponse{Profiles: encodeUserProfiles(users)})
+	json.NewEncoder(w).Encode(mvmPb.GetFriendsResponse{
+		Profiles:     encodeUserProfiles(users),
+		Pending:      friends.Pending,
+		SentRequests: friends.Sent,
+	})
 }
 
 func encodeUserProfiles(profiles []*model.User) []*mvmPb.UserProfile {

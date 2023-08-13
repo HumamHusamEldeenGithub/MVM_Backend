@@ -56,7 +56,7 @@ type IMVMStore interface {
 	CreateRoomInvitation(roomId, recipientId string) error
 	DeleteRoomInvitation(roomId, recipientId string) error
 
-	GetFriends(userID string) ([]string, error)
+	GetFriends(userID string) (*model.Friends, error)
 	GetPendingFriends(userID string) ([]string, error)
 	CreateFriendRequest(userID, friendID string) error
 	DeleteFriendRequest(userID, friendID string) error
@@ -65,7 +65,7 @@ type IMVMStore interface {
 
 	CreateNotification(notification *mvmPb.Notification) (*mvmPb.Notification, error)
 	GetNotifications(userID string) ([]*mvmPb.Notification, error)
-	DeleteNotification(userID, notificationID string) error
+	DeleteNotifications(userID string) error
 }
 
 type IMVMAuth interface {
@@ -99,7 +99,7 @@ func (s *mvmService) CreateFriendRequestNotification(fromUser, toUser string) (*
 	return &mvmPb.Notification{
 		Id:       utils.GenerateID(),
 		UserId:   toUser,
-		Type:     mvmPb.NotificationType_FRIEND_REQUEST,
+		Type:     int32(mvmPb.NotificationType_FRIEND_REQUEST),
 		FromUser: fromUser,
 		Message:  &msg,
 	}, nil

@@ -31,7 +31,7 @@ func (s *mvmService) CheckFriendship(user1, user2 string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	for _, friendId := range friends {
+	for _, friendId := range friends.Friends {
 		if friendId == user2 {
 			return true, nil
 		}

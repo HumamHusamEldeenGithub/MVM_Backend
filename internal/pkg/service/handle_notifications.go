@@ -15,7 +15,6 @@ func (s *mvmService) HandleNotifications() {
 
 		for _, peer := range Clients.clients {
 			if peer.ID == msg.UserId {
-				log.Print("Found USER ON SOCKET")
 				jsonString := protojson.Format(&msg)
 				message := &Message{
 					Type:   "notification",
