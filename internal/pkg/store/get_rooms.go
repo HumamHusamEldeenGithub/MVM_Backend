@@ -11,8 +11,6 @@ import (
 func (repository *MVMRepository) GetRooms(searchQuery string) ([]*mvmPb.Room, error) {
 	var filter interface{} = bson.D{}
 	if len(searchQuery) != 0 {
-		fmt.Println(searchQuery)
-		//filter = bson.M{"title": bson.M{"$regex": searchQuery, "$options": "i"}}
 		filter = bson.M{"title": bson.M{"$regex": fmt.Sprintf(`(?i)^%s`, searchQuery)}}
 	}
 	cursor, err := repository.roomsCollection.Find(repository.ctx, filter, options.Find())

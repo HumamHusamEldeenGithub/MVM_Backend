@@ -1,9 +1,12 @@
 package service
 
 import (
+	"fmt"
+	"log"
 	"mvm_backend/internal/pkg/generated/mvmPb"
 	"mvm_backend/internal/pkg/jwt_manager"
 	"mvm_backend/internal/pkg/model"
+	"mvm_backend/internal/pkg/utils"
 	"net/http"
 	"sync"
 
@@ -11,6 +14,8 @@ import (
 )
 
 var Rooms = make(map[string][]*model.SocketClient)
+
+var NotificationsBroadcaster = make(chan mvmPb.Notification)
 
 var Upgrader = websocket.Upgrader{
 
@@ -57,6 +62,10 @@ type IMVMStore interface {
 	DeleteFriendRequest(userID, friendID string) error
 	AddFriend(userID, friendID string) error
 	DeleteFriend(userID, friendID string) error
+
+	CreateNotification(notification *mvmPb.Notification) (*mvmPb.Notification, error)
+	GetNotifications(userID string) ([]*mvmPb.Notification, error)
+	DeleteNotification(userID, notificationID string) error
 }
 
 type IMVMAuth interface {
@@ -74,4 +83,24 @@ func NewMVMService(store IMVMStore, auth IMVMAuth) *mvmService {
 		store: store,
 		auth:  auth,
 	}
+}
+
+func (s *mvmService) CreateFriendRequestNotification(fromUser, toUser string) (*mvmPb.Notification, error) {
+
+	profile, err := s.GetProfile(fromUser)
+	if err != nil {
+		return nil, err
+	}
+
+	msg := fmt.Sprintf("%s has sent you a friend request", profile.Username)
+
+	log.Print(toUser)
+
+	return &mvmPb.Notification{
+		Id:       utils.GenerateID(),
+		UserId:   toUser,
+		Type:     mvmPb.NotificationType_FRIEND_REQUEST,
+		FromUser: fromUser,
+		Message:  &msg,
+	}, nil
 }

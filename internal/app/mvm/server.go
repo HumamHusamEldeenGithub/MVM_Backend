@@ -37,6 +37,10 @@ type IMVMService interface {
 	AddFriend(userID, friendID string) error
 	DeleteFriend(userID, friendID string) error
 
+	HandleNotifications()
+	GetNotifications(userID string) ([]*mvmPb.Notification, error)
+	DeleteNotification(userID, notificationID string) error
+
 	HandleWebSocketRTC(w http.ResponseWriter, r *http.Request)
 }
 

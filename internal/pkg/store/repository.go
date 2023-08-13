@@ -13,21 +13,23 @@ type MVMRepository struct {
 	mongoDBClient *mongo.Client
 	ctx           context.Context
 
-	usersCollection   *mongo.Collection
-	roomsCollection   *mongo.Collection
-	friendsCollection *mongo.Collection
-	avatarsCollection *mongo.Collection
+	usersCollection         *mongo.Collection
+	roomsCollection         *mongo.Collection
+	friendsCollection       *mongo.Collection
+	avatarsCollection       *mongo.Collection
+	notificationsCollection *mongo.Collection
 }
 
 func NewMVMRepository(ctx context.Context, db, pass string) *MVMRepository {
 	dbClient := initMongoDBConnection(ctx, db, pass)
 	return &MVMRepository{
-		ctx:               ctx,
-		mongoDBClient:     dbClient,
-		usersCollection:   dbClient.Database("public").Collection("users"),
-		roomsCollection:   dbClient.Database("public").Collection("rooms"),
-		friendsCollection: dbClient.Database("public").Collection("friends"),
-		avatarsCollection: dbClient.Database("public").Collection("avatars"),
+		ctx:                     ctx,
+		mongoDBClient:           dbClient,
+		usersCollection:         dbClient.Database("public").Collection("users"),
+		roomsCollection:         dbClient.Database("public").Collection("rooms"),
+		friendsCollection:       dbClient.Database("public").Collection("friends"),
+		avatarsCollection:       dbClient.Database("public").Collection("avatars"),
+		notificationsCollection: dbClient.Database("public").Collection("notifications"),
 	}
 }
 
@@ -53,15 +55,3 @@ func initMongoDBConnection(ctx context.Context, dbTitle, pass string) *mongo.Cli
 	}
 	return db
 }
-
-// // Define the unique index model
-// index := mongo.IndexModel{
-//     Keys:    bson.M{"email": 1},
-//     Options: options.Index().SetUnique(true),
-// }
-
-// // Create the index
-// _, err = collection.Indexes().CreateOne(context.Background(), index)
-// if err != nil {
-//     log.Fatal(err)
-// }
