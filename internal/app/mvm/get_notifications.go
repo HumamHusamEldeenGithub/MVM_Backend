@@ -21,5 +21,5 @@ func (s *MVMServiceServer) GetNotifications(w http.ResponseWriter, r *http.Reque
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(mvmPb.GetNotifications{Notifications: notifications})
+	json.NewEncoder(w).Encode(mvmPb.GetNotificationsResponse{Notifications: notifications})
 }

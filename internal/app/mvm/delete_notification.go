@@ -13,7 +13,7 @@ func (s *MVMServiceServer) DeleteNotification(w http.ResponseWriter, r *http.Req
 		errors.NewHTTPError(w, errors.NewError("User ID not found", http.StatusNotFound), http.StatusNotFound)
 		return
 	}
-	var input mvmPb.DeleteNotification
+	var input mvmPb.DeleteNotificationRequest
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -24,5 +24,5 @@ func (s *MVMServiceServer) DeleteNotification(w http.ResponseWriter, r *http.Req
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(mvmPb.DeleteNotification{})
+	json.NewEncoder(w).Encode(mvmPb.DeleteNotificationResponse{})
 }
