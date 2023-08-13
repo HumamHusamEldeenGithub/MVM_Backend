@@ -208,13 +208,15 @@ message AvatarSettings{
     string roomBackgroundColor = 14;
 }
 
-message GetNotifications {
+message GetNotificationsResponse {
     repeated Notification notifications = 1;
 }
 
-message DeleteNotification {
+message DeleteNotificationRequest {
     string id = 1 ; 
 }
+
+message DeleteNotificationResponse {}
 
 // Socket messages 
 
