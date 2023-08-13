@@ -13,9 +13,9 @@ func (s *mvmService) HandleNotifications() {
 		var msg mvmPb.Notification
 		msg = <-NotificationsBroadcaster
 
-		Clients.mu.Lock()
 		for _, peer := range Clients.clients {
 			if peer.ID == msg.UserId {
+				log.Print("Found USER ON SOCKET")
 				jsonString := protojson.Format(&msg)
 				message := &Message{
 					Type:   "notification",
@@ -26,6 +26,5 @@ func (s *mvmService) HandleNotifications() {
 				forwardMessage(peer.ID, message)
 			}
 		}
-		Clients.mu.Unlock()
 	}
 }
