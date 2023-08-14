@@ -9,8 +9,9 @@ import (
 
 func (repository *MVMRepository) GetNotifications(userId string) ([]*mvmPb.Notification, error) {
 	filter := bson.D{{Key: "userid", Value: userId}}
+	options := options.Find().SetSort(bson.D{{"_id", -1}})
 
-	cursor, err := repository.notificationsCollection.Find(repository.ctx, filter, options.Find())
+	cursor, err := repository.notificationsCollection.Find(repository.ctx, filter, options)
 	if err != nil {
 		return nil, err
 	}
