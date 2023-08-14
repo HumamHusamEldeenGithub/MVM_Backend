@@ -171,6 +171,8 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 			if err != nil {
 				log.Println("Failed to forward answer:", err)
 			}
+		case "refreshFriends":
+			s.GetOnlineFriendStatus(userID)
 
 		default:
 			log.Println("Unknown message type:", message.Type)
