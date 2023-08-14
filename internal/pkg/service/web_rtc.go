@@ -65,10 +65,8 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 		Friends:    friends.Friends,
 	}
 
-	Clients.mu.Lock()
 	Clients.clients[client.ID] = client
 	log.Printf("Registered client %s\n", client.ID)
-	Clients.mu.Unlock()
 
 	profile, err := s.GetProfile(client.ID)
 	if err != nil {
@@ -168,9 +166,7 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 			forwardMessageToRoom(userID, client.RoomID, &message)
 
 		case "getIce":
-			Clients.mu.Lock()
 			message.Data = Clients.clients[message.ToId].ICECandidates
-			Clients.mu.Unlock()
 			err = forwardMessage(userID, &message)
 			if err != nil {
 				log.Println("Failed to forward answer:", err)
@@ -205,9 +201,9 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 
 func forwardMessage(clientID string, message *Message) error {
 	log.Printf("Forward %s to %s", *&message.Type, clientID)
-	Clients.mu.Lock()
+
 	client := Clients.clients[clientID]
-	Clients.mu.Unlock()
+
 	if client == nil {
 		return fmt.Errorf("client %s not found", clientID)
 	}
@@ -251,7 +247,6 @@ func PushOnlineStatusToFriends(client *model.SocketClient, isOnline bool) {
 		friendMap[friend] = true
 	}
 
-	Clients.mu.Lock()
 	for _, peer := range Clients.clients {
 		if friendMap[peer.ID] {
 			jsonString := protojson.Format(&mvmPb.OnlineStatus{
@@ -268,7 +263,6 @@ func PushOnlineStatusToFriends(client *model.SocketClient, isOnline bool) {
 			forwardMessage(peer.ID, message)
 		}
 	}
-	Clients.mu.Unlock()
 }
 
 func (s *mvmService) GetOnlineFriendStatus(userID string) {
@@ -277,9 +271,7 @@ func (s *mvmService) GetOnlineFriendStatus(userID string) {
 		log.Printf("error: %v", err)
 	}
 
-	Clients.mu.Lock()
 	Clients.clients[userID].Friends = friends.Friends
-	Clients.mu.Unlock()
 
 	friendMap := make(map[string]bool)
 	for _, friend := range friends.Friends {
@@ -288,7 +280,6 @@ func (s *mvmService) GetOnlineFriendStatus(userID string) {
 
 	onlineStatusList := &mvmPb.OnlineStatuses{}
 
-	Clients.mu.Lock()
 	for _, peer := range Clients.clients {
 		if friendMap[peer.ID] {
 			profile, err := s.GetProfile(peer.ID)
@@ -307,7 +298,6 @@ func (s *mvmService) GetOnlineFriendStatus(userID string) {
 		Username: "amer",
 		IsOnline: true,
 	})
-	Clients.mu.Unlock()
 
 	jsonString := protojson.Format(onlineStatusList)
 
