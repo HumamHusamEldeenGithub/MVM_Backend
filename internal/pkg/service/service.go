@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"log"
 	"mvm_backend/internal/pkg/generated/mvmPb"
 	"mvm_backend/internal/pkg/jwt_manager"
 	"mvm_backend/internal/pkg/model"
@@ -15,7 +14,7 @@ import (
 
 var Rooms = make(map[string][]*model.SocketClient)
 
-var NotificationsBroadcaster = make(chan mvmPb.Notification)
+var NotificationsBroadcaster = make(chan *mvmPb.Notification)
 
 var Upgrader = websocket.Upgrader{
 
@@ -86,7 +85,6 @@ func NewMVMService(store IMVMStore, auth IMVMAuth) *mvmService {
 }
 
 func (s *mvmService) CreateFriendRequestNotification(fromUser, toUser string) (*mvmPb.Notification, error) {
-
 	profile, err := s.GetProfile(fromUser)
 	if err != nil {
 		return nil, err
@@ -94,12 +92,49 @@ func (s *mvmService) CreateFriendRequestNotification(fromUser, toUser string) (*
 
 	msg := fmt.Sprintf("%s has sent you a friend request", profile.Username)
 
-	log.Print(toUser)
-
 	return &mvmPb.Notification{
 		Id:       utils.GenerateID(),
 		UserId:   toUser,
 		Type:     int32(mvmPb.NotificationType_FRIEND_REQUEST),
+		FromUser: fromUser,
+		Message:  &msg,
+	}, nil
+}
+
+func (s *mvmService) CreateRoomInvitationNotification(fromUser, toUser, roomId string) (*mvmPb.Notification, error) {
+	profile, err := s.GetProfile(fromUser)
+	if err != nil {
+		return nil, err
+	}
+
+	room, err := s.GetRoom(roomId)
+	if err != nil {
+		return nil, err
+	}
+
+	msg := fmt.Sprintf("%s has sent you a room invitation to %s room", profile.Username, room.Title)
+
+	return &mvmPb.Notification{
+		Id:       utils.GenerateID(),
+		UserId:   toUser,
+		Type:     int32(mvmPb.NotificationType_ROOM_INVITATION),
+		FromUser: fromUser,
+		Message:  &msg,
+	}, nil
+}
+
+func (s *mvmService) CreateAcceptFriendRequestNotification(fromUser, toUser string) (*mvmPb.Notification, error) {
+	profile, err := s.GetProfile(fromUser)
+	if err != nil {
+		return nil, err
+	}
+
+	msg := fmt.Sprintf("%s has accepted your friend request", profile.Username)
+
+	return &mvmPb.Notification{
+		Id:       utils.GenerateID(),
+		UserId:   toUser,
+		Type:     int32(mvmPb.NotificationType_ACCEPT_REQUEST),
 		FromUser: fromUser,
 		Message:  &msg,
 	}, nil

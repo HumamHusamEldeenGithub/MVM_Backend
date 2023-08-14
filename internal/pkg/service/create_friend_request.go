@@ -4,7 +4,7 @@ import "log"
 
 func (s *mvmService) CreateFriendRequest(userID, friendID string) error {
 	if err := s.store.CreateFriendRequest(userID, friendID); err != nil {
-		return nil
+		return err
 	}
 
 	notification, err := s.CreateFriendRequestNotification(userID, friendID)
@@ -17,7 +17,7 @@ func (s *mvmService) CreateFriendRequest(userID, friendID string) error {
 		log.Printf("error: %v", err)
 	}
 
-	NotificationsBroadcaster <- *notification
+	NotificationsBroadcaster <- notification
 
 	return nil
 }

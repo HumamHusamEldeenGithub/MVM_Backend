@@ -10,12 +10,12 @@ import (
 func (s *mvmService) HandleNotifications() {
 	log.Print("Start listening for notifications")
 	for {
-		var msg mvmPb.Notification
+		var msg *mvmPb.Notification
 		msg = <-NotificationsBroadcaster
 
 		for _, peer := range Clients.clients {
 			if peer.ID == msg.UserId {
-				jsonString := protojson.Format(&msg)
+				jsonString := protojson.Format(msg)
 				message := &Message{
 					Type:   "notification",
 					ToId:   peer.ID,
