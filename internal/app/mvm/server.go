@@ -13,7 +13,7 @@ type MVMServiceServer struct {
 
 type IMVMService interface {
 	LoginUser(username, password string) (string, *jwt_manager.JWTToken, error)
-	LoginByRefreshToken(refreshToken string) (*jwt_manager.JWTToken, error)
+	LoginByRefreshToken(refreshToken string) (string, *jwt_manager.JWTToken, error)
 	CreateUser(user *model.User) (string, *jwt_manager.JWTToken, error)
 
 	GetUserByUsername(username string) (*model.User, error)

@@ -120,6 +120,7 @@ func (s *mvmService) CreateRoomInvitationNotification(fromUser, toUser, roomId s
 		Type:     int32(mvmPb.NotificationType_ROOM_INVITATION),
 		FromUser: fromUser,
 		Message:  &msg,
+		EntityId: &roomId,
 	}, nil
 }
 

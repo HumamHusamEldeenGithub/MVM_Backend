@@ -14,13 +14,14 @@ func (s *MVMServiceServer) LoginByRefreshToken(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	res, err := s.service.LoginByRefreshToken(input.RefreshToken)
+	userId, res, err := s.service.LoginByRefreshToken(input.RefreshToken)
 	if err != nil {
 		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(mvmPb.LoginByRefreshTokenResponse{
+	json.NewEncoder(w).Encode(mvmPb.LoginUserResponse{
+		Id:           userId,
 		Token:        res.Token,
 		RefreshToken: res.RefreshToken,
 	})
