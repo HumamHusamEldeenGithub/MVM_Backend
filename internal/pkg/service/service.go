@@ -64,6 +64,7 @@ type IMVMStore interface {
 
 	CreateNotification(notification *mvmPb.Notification) (*mvmPb.Notification, error)
 	GetNotifications(userID string) ([]*mvmPb.Notification, error)
+	DeleteNotification(userID, notificationId string) error
 	DeleteNotifications(userID string) error
 }
 

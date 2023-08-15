@@ -39,6 +39,7 @@ type IMVMService interface {
 
 	HandleNotifications()
 	GetNotifications(userID string) ([]*mvmPb.Notification, error)
+	DeleteNotification(userID, notificationId string) error
 	DeleteNotifications(userID string) error
 
 	HandleWebSocketRTC(w http.ResponseWriter, r *http.Request)

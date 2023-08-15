@@ -86,6 +86,7 @@ func SetupRouter(router *mux.Router, mvmServer *mvm.MVMServiceServer, jwt_manage
 	notificationsGroup := router.PathPrefix("/notifications").Subrouter()
 	notificationsGroup.Use(mw.MyMiddleware(jwt_manager))
 	notificationsGroup.HandleFunc("", mvmServer.GetNotifications).Methods("GET")
+	notificationsGroup.HandleFunc("/delete_one", mvmServer.DeleteNotification).Methods("DELETE")
 	notificationsGroup.HandleFunc("", mvmServer.DeleteNotifications).Methods("DELETE")
 
 }
