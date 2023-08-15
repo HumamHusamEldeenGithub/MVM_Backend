@@ -18,5 +18,5 @@ func (s *MVMServiceServer) DeleteNotifications(w http.ResponseWriter, r *http.Re
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(mvmPb.DeleteNotificationResponse{})
+	json.NewEncoder(w).Encode(mvmPb.DeleteNotificationsResponse{})
 }
