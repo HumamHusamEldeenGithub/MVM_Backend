@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"mvm_backend/internal/pkg/errors"
 	"mvm_backend/internal/pkg/generated/mvmPb"
 	"mvm_backend/internal/pkg/model"
 	"net/http"
@@ -48,7 +47,8 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 	tokenString := strings.ReplaceAll(authHeader, "Bearer ", "")
 	userID, err := s.auth.VerifyToken(tokenString, false)
 	if err != nil {
-		handleError(conn, "client connection has been terminated , invalid token.", http.StatusUnauthorized)
+		forwardErrorMessage(userID, "Invalid token",
+			401, mvmPb.ErrorMessageType_INVALID_TOKEN)
 		return
 	}
 
@@ -70,7 +70,8 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 
 	profile, err := s.GetProfile(client.ID)
 	if err != nil {
-		handleError(conn, "user profile not found", http.StatusNotFound)
+		forwardErrorMessage(userID, "UserProfile not found",
+			404, mvmPb.ErrorMessageType_USER_NOT_FOUND)
 		return
 	}
 	Clients.clients[client.ID].Profile = profile
@@ -106,19 +107,22 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 			log.Printf("user:%s trying to connecting to room: %s  ", client.ID, roomId)
 
 			if len(roomId) == 0 {
-				handleError(conn, "room id not found", http.StatusNotFound)
+				forwardErrorMessage(userID, "Room id not found",
+					404, mvmPb.ErrorMessageType_ROOM_ID_NOT_FOUND)
 				return
 			}
 
 			if err := s.CheckRoomAvailability(roomId, userID); err != nil {
-				handleError(conn, "Not authorized to enter this room ", http.StatusUnauthorized)
+				forwardErrorMessage(userID, "Not authorized to enter this room",
+					401, mvmPb.ErrorMessageType_ROOM_NOT_AUTHORIZED)
 				return
 			}
 
 			Rooms[roomId] = append(Rooms[roomId], client)
 
 			if err := s.JoinRoom(roomId, userID); err != nil {
-				handleError(conn, err.Error(), http.StatusInternalServerError)
+				forwardErrorMessage(userID, fmt.Sprintf("Couldn't join room with id %s", roomId),
+					500, mvmPb.ErrorMessageType_INTERNAL_ERROR)
 				return
 			}
 
@@ -234,6 +238,19 @@ func forwardMessageToRoom(clientID, roomID string, message *Message) {
 	}
 }
 
+func forwardErrorMessage(clientID, errorMsg string, statusCode int64, errorType mvmPb.ErrorMessageType) {
+	jsonMsg := protojson.Format(&mvmPb.ErrorMessage{
+		StatusCode: statusCode,
+		Error:      errorMsg,
+		Type:       errorType,
+	})
+	forwardMessage(clientID, &Message{
+		Type: "error",
+		ToId: clientID,
+		Data: jsonMsg,
+	})
+}
+
 func deleteUserFromRoom(roomId, userId string) {
 	for i, client := range Rooms[roomId] {
 		if client.ID == userId {
@@ -310,17 +327,4 @@ func (s *mvmService) GetOnlineFriendStatus(userID string) {
 	}
 	forwardMessage(userID, message)
 
-}
-
-func handleError(ws *websocket.Conn, message string, code int64) {
-	errMsg := &mvmPb.SocketMessage{
-		Type: mvmPb.SocketMessageType_ERROR,
-		Data: errors.NewSocketError(message, code),
-	}
-	log.Printf("error: %v", errMsg)
-	if err := ws.WriteJSON(errMsg); err != nil {
-		log.Printf("error: %v", err)
-	}
-	ws.Close()
-	return
 }
