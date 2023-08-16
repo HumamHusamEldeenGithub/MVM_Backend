@@ -243,7 +243,7 @@ message RoomMessage {
 message ErrorMessage {
     int64 status_code = 1 ; 
     string error = 2 ;
-    ErrorMessageType type = 3;
+    int32 type = 3;
 }
 
 enum ErrorMessageType {

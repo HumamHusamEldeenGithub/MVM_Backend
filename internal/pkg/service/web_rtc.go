@@ -48,7 +48,7 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 	userID, err := s.auth.VerifyToken(tokenString, false)
 	if err != nil {
 		forwardErrorMessage(userID, "Invalid token",
-			401, mvmPb.ErrorMessageType_INVALID_TOKEN)
+			401, int32(mvmPb.ErrorMessageType_INVALID_TOKEN))
 		return
 	}
 
@@ -71,7 +71,7 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 	profile, err := s.GetProfile(client.ID)
 	if err != nil {
 		forwardErrorMessage(userID, "UserProfile not found",
-			404, mvmPb.ErrorMessageType_USER_NOT_FOUND)
+			404, int32(mvmPb.ErrorMessageType_USER_NOT_FOUND))
 		return
 	}
 	Clients.clients[client.ID].Profile = profile
@@ -108,13 +108,13 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 
 			if len(roomId) == 0 {
 				forwardErrorMessage(userID, "Room id not found",
-					404, mvmPb.ErrorMessageType_ROOM_ID_NOT_FOUND)
+					404, int32(mvmPb.ErrorMessageType_ROOM_ID_NOT_FOUND))
 				return
 			}
 
 			if err := s.CheckRoomAvailability(roomId, userID); err != nil {
 				forwardErrorMessage(userID, "Not authorized to enter this room",
-					401, mvmPb.ErrorMessageType_ROOM_NOT_AUTHORIZED)
+					401, int32(mvmPb.ErrorMessageType_ROOM_NOT_AUTHORIZED))
 				return
 			}
 
@@ -122,7 +122,7 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 
 			if err := s.JoinRoom(roomId, userID); err != nil {
 				forwardErrorMessage(userID, fmt.Sprintf("Couldn't join room with id %s", roomId),
-					500, mvmPb.ErrorMessageType_INTERNAL_ERROR)
+					500, int32(mvmPb.ErrorMessageType_INTERNAL_ERROR))
 				return
 			}
 
@@ -238,7 +238,7 @@ func forwardMessageToRoom(clientID, roomID string, message *Message) {
 	}
 }
 
-func forwardErrorMessage(clientID, errorMsg string, statusCode int64, errorType mvmPb.ErrorMessageType) {
+func forwardErrorMessage(clientID, errorMsg string, statusCode int64, errorType int32) {
 	jsonMsg := protojson.Format(&mvmPb.ErrorMessage{
 		StatusCode: statusCode,
 		Error:      errorMsg,
