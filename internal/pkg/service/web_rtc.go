@@ -179,10 +179,17 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 			s.GetOnlineFriendStatus(userID)
 
 		case "chat_message":
-			socketChatMessage := message.Data.(*mvmPb.SocketChatMessage)
-			s.CreateChatMessage(socketChatMessage.ChatId,
-				&mvmPb.ChatMessage{UserId: userID, Message: socketChatMessage.Message})
-			forwardMessage(message.ToId, &message)
+			var chatMessage mvmPb.SocketChatMessage
+			err := json.Unmarshal([]byte(message.Data.(string)), &chatMessage)
+			if err != nil {
+				log.Println("Error :", err)
+			} else {
+				if err := s.CreateChatMessage(chatMessage.ChatId,
+					&mvmPb.ChatMessage{UserId: userID, Message: chatMessage.Message}); err != nil {
+					log.Println("Error :", err)
+				}
+				forwardMessage(message.ToId, &message)
+			}
 
 		default:
 			log.Println("Unknown message type:", message.Type)
