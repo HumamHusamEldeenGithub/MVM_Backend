@@ -178,6 +178,12 @@ func (s *mvmService) HandleWebSocketRTC(w http.ResponseWriter, r *http.Request) 
 		case "refreshFriends":
 			s.GetOnlineFriendStatus(userID)
 
+		case "chat_message":
+			socketChatMessage := message.Data.(*mvmPb.SocketChatMessage)
+			s.CreateChatMessage(socketChatMessage.ChatId,
+				&mvmPb.ChatMessage{UserId: userID, Message: socketChatMessage.Message})
+			forwardMessage(message.ToId, &message)
+
 		default:
 			log.Println("Unknown message type:", message.Type)
 		}
@@ -249,6 +255,10 @@ func forwardErrorMessage(clientID, errorMsg string, statusCode int64, errorType 
 		ToId: clientID,
 		Data: jsonMsg,
 	})
+}
+
+func forwardChatMessage(clientID, chatMsg *mvmPb.ChatMessage) {
+
 }
 
 func deleteUserFromRoom(roomId, userId string) {

@@ -66,6 +66,10 @@ type IMVMStore interface {
 	GetNotifications(userID string) ([]*mvmPb.Notification, error)
 	DeleteNotification(userID, notificationId string) error
 	DeleteNotifications(userID string) error
+
+	CreateChat(*mvmPb.Chat) error
+	CreateChatMessage(chatId string, chatMessage *mvmPb.ChatMessage) error
+	GetChat(userId1, userId2 string) (*mvmPb.Chat, error)
 }
 
 type IMVMAuth interface {

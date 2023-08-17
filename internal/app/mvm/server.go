@@ -42,6 +42,10 @@ type IMVMService interface {
 	DeleteNotification(userID, notificationId string) error
 	DeleteNotifications(userID string) error
 
+	CreateChat(userId1, userId2 string) (string, error)
+	CreateChatMessage(chatId string, message *mvmPb.ChatMessage) error
+	GetChat(userId1, userId2 string) (*mvmPb.Chat, error)
+
 	HandleWebSocketRTC(w http.ResponseWriter, r *http.Request)
 }
 
