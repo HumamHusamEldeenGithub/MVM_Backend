@@ -14,7 +14,7 @@ func (repository *MVMRepository) AddFriend(userID, friendID string) error {
 	}
 
 	filter = bson.M{"id": friendID}
-	update = bson.M{"$pull": bson.M{"send": userID}}
+	update = bson.M{"$pull": bson.M{"sent": userID}}
 	_, err = repository.friendsCollection.UpdateOne(repository.ctx, filter, update)
 	if err != nil {
 		return err
