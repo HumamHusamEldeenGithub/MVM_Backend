@@ -7,6 +7,11 @@ func (s *mvmService) AddFriend(userID, friendID string) error {
 		return err
 	}
 
+	_, err := s.CreateChat(userID, friendID)
+	if err != nil {
+		log.Printf("error: %v", err)
+	}
+
 	notification, err := s.CreateAcceptFriendRequestNotification(userID, friendID)
 	if err != nil {
 		log.Printf("error: %v", err)
