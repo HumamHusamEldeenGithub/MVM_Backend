@@ -41,7 +41,7 @@ type IMVMStore interface {
 	GetProfile(id string, withPassword bool) (*model.User, error)
 	GetProfiles(ids []string) ([]*model.User, error)
 	GetUserByUsername(username string, withPassword bool) (*model.User, error)
-	SearchForUsers(searchInput string) ([]*model.User, error)
+	SearchForUsers(searchInput string, userId string) ([]*model.User, error)
 	UpsertAvatarSettings(id string, settings *mvmPb.AvatarSettings) error
 	GetAvatarSettings(id string) (*mvmPb.AvatarSettings, error)
 

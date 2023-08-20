@@ -9,13 +9,19 @@ import (
 )
 
 func (s *MVMServiceServer) SearchForUsers(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value("user_id").(string)
+	if !ok {
+		errors.NewHTTPError(w, errors.NewError("User ID not found", http.StatusNotFound), http.StatusNotFound)
+		return
+	}
+
 	var input mvmPb.SearchForUsersRequest
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	res, err := s.service.SearchForUsers(input.SearchInput)
+	res, err := s.service.SearchForUsers(input.SearchInput, userID)
 	if err != nil {
 		errors.NewHTTPError(w, errors.NewError(err.Error(), http.StatusNotFound), http.StatusNotFound)
 		return

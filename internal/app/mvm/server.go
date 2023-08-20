@@ -19,7 +19,7 @@ type IMVMService interface {
 	GetUserByUsername(username string) (*model.User, error)
 	GetProfile(id string) (*model.User, error)
 	GetProfiles(ids []string) ([]*model.User, error)
-	SearchForUsers(searchInput string) ([]*model.User, error)
+	SearchForUsers(searchInput, userId string) ([]*model.User, error)
 	UpsertAvatarSettings(id string, settings *mvmPb.AvatarSettings) error
 	GetAvatarSettings(id string) (*mvmPb.AvatarSettings, error)
 
