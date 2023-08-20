@@ -329,12 +329,6 @@ func (s *mvmService) GetOnlineFriendStatus(userID string) {
 			})
 		}
 	}
-	onlineStatusList.Users = append(onlineStatusList.Users, &mvmPb.OnlineStatus{
-		Id:       "e1cb241c-62f6-446e-9368-6e8732c20cac",
-		Username: "amer",
-		IsOnline: true,
-	})
-
 	jsonString := protojson.Format(onlineStatusList)
 
 	message := &Message{
